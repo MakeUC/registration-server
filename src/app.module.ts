@@ -1,10 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { RegistrationModule } from './registration.module';
+import { Registrant } from './registrant.entity';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: `mongodb`,
+      url: process.env.DATABSE_URL,
+      entities: [Registrant]
+    }),
+    RegistrationModule
+  ],
 })
 export class AppModule {}
