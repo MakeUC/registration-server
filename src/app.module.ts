@@ -7,7 +7,7 @@ import { Registrant } from './registrant.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: `mongodb`,
-      url: process.env.DATABSE_URL,
+      url: process.env.DATABASE_URL,
       entities: [Registrant]
     }),
     RegistrationModule
