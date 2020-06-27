@@ -11,10 +11,6 @@ export class RegistrationService {
     @InjectRepository(Registrant) private registrants: Repository<Registrant>,
     private emailService: EmailService
   ) {}
-  
-  fetchAll(): Promise<Registrant[]> {
-    return this.registrants.find();
-  }
 
   async register(data: RegistrantDTO): Promise<Registrant> {
     const existing = await this.registrants.find({ where: { email: data.email } });

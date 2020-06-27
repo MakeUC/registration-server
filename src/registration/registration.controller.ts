@@ -7,11 +7,6 @@ import { Registrant } from './registrant.entity';
 export class RegistrationController {
   constructor(private readonly registrationService: RegistrationService) {}
 
-  @Get()
-  fetchAll(): Promise<Registrant[]> {
-    return this.registrationService.fetchAll();
-  }
-
   @Post()
   register(@Body() newRegistrant: RegistrantDTO): Promise<Registrant> {
     return this.registrationService.register(newRegistrant);
