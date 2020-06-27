@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RegistrationModule } from './registration.module';
-import { Registrant } from './registrant.entity';
+import { RegistrationModule } from './registration/registration.module';
+import { Registrant } from './registration/registrant.entity';
 
 @Module({
   imports: [

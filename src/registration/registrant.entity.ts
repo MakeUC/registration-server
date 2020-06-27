@@ -25,4 +25,7 @@ export class Registrant {
 
   @Column()
   gender: string;
+
+  @Column()
+  isVerified: boolean
 }
