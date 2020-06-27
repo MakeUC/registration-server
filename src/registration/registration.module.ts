@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RegistrationController } from './registration.controller';
 import { RegistrationService } from './registrant.service';
 import { Registrant } from './registrant.entity';
+import { FileService } from './file.service';
 import { EmailService } from './email.service';
 
 @Module({
@@ -10,6 +11,6 @@ import { EmailService } from './email.service';
     TypeOrmModule.forFeature([ Registrant ])
   ],
   controllers: [RegistrationController],
-  providers: [RegistrationService, EmailService],
+  providers: [RegistrationService, FileService, EmailService],
 })
 export class RegistrationModule {}

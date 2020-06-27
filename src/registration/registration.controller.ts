@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { RegistrationService } from './registrant.service';
 import { RegistrantDTO } from './registrant.dto';
 import { Registrant } from './registrant.entity';
@@ -8,8 +9,9 @@ export class RegistrationController {
   constructor(private readonly registrationService: RegistrationService) {}
 
   @Post()
-  register(@Body() newRegistrant: RegistrantDTO): Promise<Registrant> {
-    return this.registrationService.register(newRegistrant);
+  @UseInterceptors(FileInterceptor('resume'))
+  register(@Body() newRegistrant: RegistrantDTO, @UploadedFile() resume: File): Promise<Registrant> {
+    return this.registrationService.register(newRegistrant, resume);
   }
 
   @Get(`/verify/:id`)
