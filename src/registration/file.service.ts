@@ -17,7 +17,7 @@ export class FileService {
   
   async uploadResume(file: Express.Multer.File, registrant: Registrant): Promise<string> {
     try {
-      const upload = await s3.upload({ Bucket: this.bucketName, Key: `${registrant.email}-resume`, Body: file.buffer }).promise();
+      const upload = await s3.upload({ Bucket: this.bucketName, Key: `${registrant.email}-resume.pdf`, Body: file.buffer }).promise();
       return upload.Location;
     } catch (err) {
       Logger.error(`Error uploading file to S3: ${err.message}`);
