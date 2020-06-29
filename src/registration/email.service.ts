@@ -8,7 +8,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 @Injectable()
 export class EmailService {
-  fromAddress = `contact@makeuc.io`;
+  fromAddress = `info@makeuc.io`;
 
   template: HandlebarsTemplateDelegate<{ fullName: string, verificationUrl: string, coverImgUrl: string }>;
 
