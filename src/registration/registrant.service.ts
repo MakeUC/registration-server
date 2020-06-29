@@ -14,12 +14,6 @@ export class RegistrationService {
     private emailService: EmailService
   ) {}
 
-  async registerTest(data: RegistrantDTO, resume: Express.Multer.File): Promise<Registrant> {
-    const newRegistrant: Registrant = this.registrants.create(data);
-    console.log({ data, resume });
-    return newRegistrant;
-  }
-
   async register(data: RegistrantDTO, resume: Express.Multer.File): Promise<Registrant> {
     const existing = await this.registrants.find({ where: { email: data.email } });
     if(existing.length) {
@@ -48,9 +42,5 @@ export class RegistrationService {
     }
     registrant.isVerified = true;
     return await this.registrants.save(registrant);
-  }
-
-  async clear(): Promise<void> {
-    return this.registrants.clear();
   }
 }
