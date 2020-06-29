@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Registrant } from './registrant.entity';
@@ -14,15 +14,30 @@ export class RegistrationService {
     private emailService: EmailService
   ) {}
 
-  async register(data: RegistrantDTO, resume: File): Promise<Registrant> {
+  async registerTest(data: RegistrantDTO, resume: Express.Multer.File): Promise<Registrant> {
+    const newRegistrant: Registrant = this.registrants.create(data);
+    console.log({ data, resume });
+    return newRegistrant;
+  }
+
+  async register(data: RegistrantDTO, resume: Express.Multer.File): Promise<Registrant> {
     const existing = await this.registrants.find({ where: { email: data.email } });
     if(existing.length) {
-      throw new HttpException(`Registrant already exists`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(`Email already exists`, HttpStatus.BAD_REQUEST);
     }
+
     const newRegistrant: Registrant = this.registrants.create(data);
-    newRegistrant.resumeUrl = await this.fileService.uploadResume(resume, newRegistrant);
-    await this.registrants.save(newRegistrant);
+    newRegistrant.resumeUrl = resume ? await this.fileService.uploadResume(resume, newRegistrant) : ``;
+
+    try {
+      await this.registrants.save(newRegistrant);
+    } catch (err) {
+      Logger.error(err);
+      throw new HttpException(`Error inserting registrant data into database: ${err.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     this.emailService.sendVerificationEmail(newRegistrant);
+
     return newRegistrant;
   }
 
@@ -33,5 +48,9 @@ export class RegistrationService {
     }
     registrant.isVerified = true;
     return await this.registrants.save(registrant);
+  }
+
+  async clear(): Promise<void> {
+    return this.registrants.clear();
   }
 }

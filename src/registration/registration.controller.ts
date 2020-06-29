@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseInterceptors, UploadedFile, Redirect } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RegistrationService } from './registrant.service';
 import { RegistrantDTO } from './registrant.dto';
@@ -10,13 +10,14 @@ export class RegistrationController {
 
   @Post()
   @UseInterceptors(FileInterceptor('resume'))
-  register(@Body() newRegistrant: RegistrantDTO, @UploadedFile() resume: File): Promise<Registrant> {
+  register(@Body() newRegistrant: RegistrantDTO, @UploadedFile() resume: Express.Multer.File): Promise<Registrant> {
     return this.registrationService.register(newRegistrant, resume);
   }
 
   @Get(`/verify/:id`)
-  async verify(@Param(`id`) id: string): Promise<string> {
+  @Redirect(`${process.env.WEBSITE_URL}/verified`)
+  async verify(@Param(`id`) id: string): Promise<void> {
     await this.registrationService.verify(id);
-    return `Thank you for confirming your email with MakeUC.`;
+    return;
   }
 }
