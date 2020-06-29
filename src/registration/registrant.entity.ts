@@ -10,9 +10,18 @@ export class Registrant {
 
   @Column({ unique: true })
   email: string;
+  
+  @Column()
+  school: string;
 
   @Column()
   degree: string;
+
+  @Column()
+  major: string;
+
+  @Column()
+  graduation: string;
 
   @Column()
   hackathonsAttended: number;
@@ -25,6 +34,9 @@ export class Registrant {
 
   @Column()
   gender: string;
+
+  @Column()
+  questions: string;
 
   @Column()
   isVerified: boolean
