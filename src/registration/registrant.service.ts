@@ -35,12 +35,13 @@ export class RegistrationService {
     return newRegistrant;
   }
 
-  async verify(id: string): Promise<Registrant> {
+  async verify(id: string): Promise<boolean> {
     const registrant: Registrant = await this.registrants.findOne(id);
     if(registrant.isVerified) {
-      throw new HttpException(`Registrant already verified`, HttpStatus.BAD_REQUEST);
+      return false;
     }
     registrant.isVerified = true;
-    return await this.registrants.save(registrant);
+    await this.registrants.save(registrant);
+    return true;
   }
 }

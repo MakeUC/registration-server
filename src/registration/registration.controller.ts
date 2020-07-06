@@ -16,8 +16,10 @@ export class RegistrationController {
 
   @Get(`/verify/:id`)
   @Redirect(`${process.env.WEBSITE_URL}/verified`)
-  async verify(@Param(`id`) id: string): Promise<void> {
-    await this.registrationService.verify(id);
-    return;
+  async verify(@Param(`id`) id: string): Promise<{ url: string }> {
+    const verified = await this.registrationService.verify(id);
+    if(!verified) {
+      return { url: `${process.env.WEBSITE_URL}/already-verified` };
+    }
   }
 }
