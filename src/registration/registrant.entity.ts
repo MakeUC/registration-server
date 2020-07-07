@@ -13,6 +13,9 @@ export class Registrant {
   
   @Column()
   school: string;
+  
+  @Column()
+  country: string;
 
   @Column()
   degree: string;
