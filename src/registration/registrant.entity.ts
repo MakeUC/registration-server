@@ -24,10 +24,10 @@ export class Registrant {
   major: string;
 
   @Column()
-  graduation: string;
+  graduation: number;
 
   @Column()
-  hackathonsAttended: number;
+  hackathonsAttended: string;
 
   @Column()
   resumeUrl: string;
