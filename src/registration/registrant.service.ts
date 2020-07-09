@@ -5,13 +5,15 @@ import { Registrant } from './registrant.entity';
 import { RegistrantDTO } from './registrant.dto';
 import { FileService } from './file.service';
 import { EmailService } from './email.service';
+import { WebhookService } from './webhook.service';
 
 @Injectable()
 export class RegistrationService {
   constructor(
     @InjectRepository(Registrant) private registrants: Repository<Registrant>,
     private fileService: FileService,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private webhookService: WebhookService
   ) {}
 
   async register(data: RegistrantDTO, resume: Express.Multer.File): Promise<Registrant> {
@@ -31,6 +33,10 @@ export class RegistrationService {
     }
 
     this.emailService.sendVerificationEmail(newRegistrant);
+
+    if(data.questions.trim().length) {
+      this.webhookService.sendQuestionWebhook(data);
+    }
 
     return newRegistrant;
   }
