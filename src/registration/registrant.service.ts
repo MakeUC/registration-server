@@ -23,6 +23,7 @@ export class RegistrationService {
     }
 
     const newRegistrant: Registrant = this.registrants.create(data);
+    newRegistrant.registeredAt = new Date();
     newRegistrant.resumeUrl = resume ? await this.fileService.uploadResume(resume, newRegistrant) : ``;
 
     try {
@@ -47,6 +48,7 @@ export class RegistrationService {
       return false;
     }
     registrant.isVerified = true;
+    registrant.verifiedAt = new Date();
     await this.registrants.save(registrant);
     return true;
   }

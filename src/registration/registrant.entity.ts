@@ -43,4 +43,10 @@ export class Registrant {
 
   @Column()
   isVerified: boolean
+
+  @Column()
+  registeredAt: Date
+
+  @Column()
+  verifiedAt: Date
 }
