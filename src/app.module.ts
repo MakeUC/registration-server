@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RegistrationModule } from './registration/registration.module';
 import { Registrant } from './registration/registrant.entity';
+import { SlackModule } from './slack/slack.module';
 
 @Module({
   imports: [
@@ -10,7 +11,8 @@ import { Registrant } from './registration/registrant.entity';
       url: process.env.DATABASE_URL,
       entities: [Registrant]
     }),
-    RegistrationModule
+    RegistrationModule,
+    SlackModule
   ],
 })
 export class AppModule {}
