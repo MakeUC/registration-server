@@ -1,4 +1,4 @@
-import { Injectable, Logger, HttpService } from "@nestjs/common";
+import { Injectable, Logger, HttpService } from '@nestjs/common';
 
 @Injectable()
 export class SlackMessageService {

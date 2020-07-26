@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { schedule } from "node-cron";
+import { schedule } from 'node-cron';
 import { Registrant } from '../registration/registrant.entity';
 import { SlackMessageService } from './slack-message.service';
 import { GenderStat, EthnicityStat, MajorStat, SchoolStat, DegreeStat, ExperienceStat } from './stats.dto';
