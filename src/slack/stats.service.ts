@@ -30,7 +30,6 @@ export class StatsService implements OnModuleInit {
 
   async sendUpdate(): Promise<void> {
     const text = `
-      Testing daily update...
       Daily registration update brought to you by the one and only, RegBot!
       ${await this.getNumber()}
       ${await this.getRandom()}
