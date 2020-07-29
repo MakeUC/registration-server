@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RegistrationModule } from './registration/registration.module';
 import { Registrant } from './registration/registrant.entity';
 import { SlackModule } from './slack/slack.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -14,5 +15,6 @@ import { SlackModule } from './slack/slack.module';
     RegistrationModule,
     SlackModule
   ],
+  controllers: [AppController]
 })
 export class AppModule {}
