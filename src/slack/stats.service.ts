@@ -34,7 +34,7 @@ export class StatsService implements OnModuleInit {
       ${await this.getNumber()}
       ${await this.getRandom()}
     `;
-    this.slackService.sendStatMessage(process.env.SLACK_WEBHOOK_URL, text);
+    this.slackService.sendStatMessage(process.env.SLACK_UPDATE_WEBHOOK_URL, text);
   }
 
   async getStat(command: SlashCommandDTO): Promise<void> {
