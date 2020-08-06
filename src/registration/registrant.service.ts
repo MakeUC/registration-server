@@ -1,6 +1,7 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { validateOrReject } from 'class-validator';
 import { Registrant } from './registrant.entity';
 import { RegistrantDTO } from './registrant.dto';
 import { FileService } from './file.service';
@@ -16,6 +17,14 @@ export class RegistrationService {
     private webhookService: WebhookService
   ) {}
 
+  private async validateRegistrant(registrant: Registrant): Promise<void> {
+    try {
+      return await validateOrReject(registrant);
+    } catch (err) {
+      throw new HttpException(`Invalid registrant fields`, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async register(data: RegistrantDTO, resume: Express.Multer.File): Promise<Registrant> {
     const existing = await this.registrants.find({ where: { email: data.email } });
     if(existing.length) {
@@ -25,6 +34,8 @@ export class RegistrationService {
     const newRegistrant: Registrant = this.registrants.create(data);
     newRegistrant.registeredAt = new Date();
     newRegistrant.resumeUrl = resume ? await this.fileService.uploadResume(resume, newRegistrant) : ``;
+
+    await this.validateRegistrant(newRegistrant);
 
     try {
       await this.registrants.save(newRegistrant);
@@ -49,6 +60,8 @@ export class RegistrationService {
     }
     registrant.isVerified = true;
     registrant.verifiedAt = new Date();
+
+    await this.validateRegistrant(registrant);
     await this.registrants.save(registrant);
     return true;
   }
