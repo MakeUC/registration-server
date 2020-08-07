@@ -21,6 +21,8 @@ export class RegistrationService {
     try {
       return await validateOrReject(registrant);
     } catch (err) {
+      Logger.error(`Validation error`);
+      Logger.error(err);
       throw new HttpException(`Invalid registrant fields`, HttpStatus.BAD_REQUEST);
     }
   }

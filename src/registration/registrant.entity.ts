@@ -1,5 +1,5 @@
 import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
-import { IsDefined, IsEmail, IsDate } from 'class-validator';
+import { IsDefined, IsEmail } from 'class-validator';
 
 @Entity()
 export class Registrant {
@@ -57,10 +57,8 @@ export class Registrant {
   isVerified: boolean
 
   @Column()
-  @IsDate()
   registeredAt: Date
 
   @Column()
-  @IsDate()
   verifiedAt: Date
 }
