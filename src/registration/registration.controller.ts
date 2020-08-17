@@ -4,6 +4,8 @@ import { RegistrationService } from './registrant.service';
 import { RegistrantDTO } from './registrant.dto';
 import { Registrant } from './registrant.entity';
 
+const websiteHost = process.env.WEBSITE_URL;
+
 @Controller(`registrant`)
 export class RegistrationController {
   constructor(private readonly registrationService: RegistrationService) {}
@@ -15,11 +17,11 @@ export class RegistrationController {
   }
 
   @Get(`/verify/:id`)
-  @Redirect(`${process.env.WEBSITE_URL}/verified`)
+  @Redirect(`${websiteHost}/verified`)
   async verify(@Param(`id`) id: string): Promise<{ url: string }> {
     const verified = await this.registrationService.verify(id);
     if(!verified) {
-      return { url: `${process.env.WEBSITE_URL}/already-verified` };
+      return { url: `${websiteHost}/already-verified` };
     }
   }
 }

@@ -1,19 +1,15 @@
 import { Module, HttpModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Registrant } from '../registration/registrant.entity';
-import { SlackController } from './slack.controller';
+import { StatsController } from './stats.controller';
 import { StatsService } from './stats.service';
-import { SlackMessageService } from './slack-message.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ Registrant ]),
     HttpModule
   ],
-  controllers: [SlackController],
-  providers: [
-    StatsService,
-    SlackMessageService
-  ],
+  controllers: [StatsController],
+  providers: [StatsService],
 })
-export class SlackModule {}
+export class StatsIntegrationModule {}

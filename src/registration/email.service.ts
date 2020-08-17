@@ -4,7 +4,11 @@ import * as sgMail from '@sendgrid/mail';
 import Handlebars from 'handlebars';
 import { Registrant } from './registrant.entity';
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const sendgridApiKey = process.env.SENDGRID_API_KEY;
+const serverHost = process.env.HOST;
+const websiteHost = process.env.WEBSITE_URL;
+
+sgMail.setApiKey(sendgridApiKey);
 
 @Injectable()
 export class EmailService {
@@ -27,8 +31,8 @@ export class EmailService {
 
   async sendVerificationEmail(registrant: Registrant): Promise<void> {
     const fullName = registrant.fullName;
-    const verificationUrl = `${process.env.HOST}/registrant/verify/${registrant.id}`;
-    const coverImgUrl = `${process.env.WEBSITE_URL}/email/cover.png`;
+    const verificationUrl = `${serverHost}/registrant/verify/${registrant.id}`;
+    const coverImgUrl = `${websiteHost}/email/cover.png`;
 
     if(!this.template) {
       return Logger.error(`Verification email template not found`);
