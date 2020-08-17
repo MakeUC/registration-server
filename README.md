@@ -1,21 +1,19 @@
-<p align="center">
-  <a href="http://makeuc.io/" target="blank"><img src="https://makeuc.github.io/makeuc.io/images/makeuc-logo.png" width="320" alt="MakeUC Logo" /></a>
-</p>
+# Registration Server
 
-## Description
+MakeUC registration server with file upload and email verification capabilities.
 
-MakeUC registration server with register, upload resume, verify email and send verification email capabilities.
-
-## Installation
+## Getting Started
 
 ```bash
 $ npm install
 ```
 
 ## Configuration
-Copy the contents of the `example.env` file into a `.env` file in the root folder. Add the appropriate credentials and urls for the services.
 
-## Running the app
+Copy the contents of the `example.env` file into a `.env` file in the root folder. 
+Add the appropriate credentials and urls for the services.
+
+## Running The Server
 
 ```bash
 # development
