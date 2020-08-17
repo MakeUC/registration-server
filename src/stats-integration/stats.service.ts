@@ -3,18 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { schedule } from 'node-cron';
 import { Registrant } from '../registration/registrant.entity';
-import { SlackMessageService } from './slack-message.service';
+import { StatCommand, getAdapter } from './service-adapter';
 import { GenderStat, EthnicityStat, MajorStat, SchoolStat, DegreeStat, ExperienceStat } from './stats.dto';
-import { SlashCommandDTO } from './slack-slash-command.dto';
 
-const sortByNumber = (a, b) => b.number - a.number;
+const statCommands: Array<StatCommand> = [`genders`, `ethnicities`, `majors`, `schools`, `degrees`, `experience`];
 const daily10PMCron = `0 0 22 * * *`;
+const dailyUpdateServices = [`slack`];
+const sortByNumber = (a, b) => b.number - a.number;
 
 @Injectable()
 export class StatsService implements OnModuleInit {
   constructor(
     @InjectRepository(Registrant) private registrants: Repository<Registrant>,
-    private slackService: SlackMessageService
   ) {}
 
   onModuleInit(): void {
@@ -24,76 +24,56 @@ export class StatsService implements OnModuleInit {
   scheduleUpdate(): void {
     schedule(daily10PMCron, () => {
       Logger.log(`Sending daily stat update`);
-      this.sendUpdate();
+      this.sendUpdate(dailyUpdateServices);
     });
   }
 
-  async sendUpdate(): Promise<void> {
+  async sendUpdate(services: Array<string>): Promise<void> {
     const text = `
       Daily registration update brought to you by the one and only, RegBot!
       ${await this.getNumber()}
       ${await this.getRandom()}
     `;
-    this.slackService.sendStatMessage(process.env.SLACK_UPDATE_WEBHOOK_URL, text);
+    services.forEach(async service => {
+      const adapter = getAdapter(service);
+      if(!adapter) {
+        Logger.error(`Invalid service string found: ${service}`);
+      }
+      try {
+        await adapter.sendMessage(text);
+        Logger.log(`Daily update successfully sent to ${service}`);
+      } catch(err) {
+        Logger.error(`Could not send daily update to ${service}: ${err.message}`);
+      }
+    });
   }
 
-  async getStat(command: SlashCommandDTO): Promise<void> {
-    let text = ``;
-    switch(command.text) {
+  getStat(command: StatCommand): Promise<string> {
+    switch(command) {
       case `number`:
-        text = await this.getNumber();
-        break;
+        return this.getNumber();
       case `genders`:
-        text = await this.getGenders();
-        break;
+        return this.getGenders();
       case `ethnicities`:
-        text = await this.getEthnicities();
-        break;
+        return this.getEthnicities();
       case `majors`:
-        text = await this.getMajors();
-        break;
+        return this.getMajors();
       case `schools`:
-        text = await this.getSchools();
-        break;
+        return this.getSchools();
       case `degrees`:
-        text = await this.getDegrees();
-        break;
+        return this.getDegrees();
       case `experience`:
-        text = await this.getExperience();
-        break;
-      case `help`:
-        text = this.slackService.getHelpText();
-        break;
+        return this.getExperience();
       default:
-        text = await this.getRandom(`Since you didn't tell me what you wanted to know, I got a random stat for you. `);
-        break;
+        return this.getRandom(`Since you didn't tell me what you wanted to know, I got a random stat for you. `);
     };
-    this.slackService.sendStatMessage(command.response_url, text);
   }
 
   async getRandom(pre?: string): Promise<string> {
-    let text = ``;
-    const randomNum = Math.ceil(Math.random() * 6);
-    switch(randomNum) {
-      case 1:
-        text = await this.getGenders();
-        break;
-      case 2:
-        text = await this.getEthnicities();
-        break;
-      case 3:
-        text = await this.getMajors();
-        break;
-      case 4:
-        text = await this.getSchools();
-        break;
-      case 5:
-        text = await this.getDegrees();
-        break;
-      case 6:
-        text = await this.getExperience();
-        break;
-    }
+    const randomIndex = Math.floor(Math.random() * statCommands.length);
+    const randomStatCommand = statCommands[randomIndex];
+    const text = await this.getStat(randomStatCommand);
+
     return pre ? `${pre}${text}` : text;
   }
   
