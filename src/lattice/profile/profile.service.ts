@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not, In } from 'typeorm';
+import { Repository, getConnection, Not } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 import { Match } from '../match.entity';
 import { ScoreService } from './score.service';
@@ -23,10 +23,11 @@ export class ProfileService {
     const matches = await this.getMatches(from);
     const matchedUsers = matches.map(match => match.to);
 
-    return this.users.find({ 
+    const coll = getConnection().getMongoRepository(User);
+    return coll.find({
       where: {
         visible: true,
-        userId: Not(In(matchedUsers))
+        _id: { $not: { $in: [ ...matchedUsers, from.id ] } },
       }
     });
   }
@@ -36,6 +37,7 @@ export class ProfileService {
     if(!from.visible) {
       throw new HttpException(`Profile must be visible`, HttpStatus.UNAUTHORIZED);
     }
+
     const unscoredProfiles = await this.getUnscoredProfiles(from);
     const scoredProfiles = this.scoreService.scoreAndSortProfiles(from, unscoredProfiles);
     return scoredProfiles;

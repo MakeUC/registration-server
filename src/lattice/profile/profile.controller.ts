@@ -4,7 +4,8 @@ import { User } from '../user.entity';
 import { CurrentUserDTO } from '../auth/dtos';
 import { CurrentUser } from '../auth/currentuser.decorator';
 import { ProfileService } from './profile.service';
-import { ProfileDTO, ScoredProfileDTO } from './profile.dto';
+import { ProfileDTO, ScoredProfileDTO, SkillDTO } from './profile.dto';
+import skills from './skills';
 
 @Controller(`profile`)
 @UseGuards(AuthGuard(`jwt`))
@@ -33,11 +34,11 @@ export class ProfileController {
 
   @Put(`/visible`)
   setVisible(@CurrentUser() user: CurrentUserDTO, @Body() body: { visible: boolean }): Promise<User> {
-    try {
-      console.log({ body });
-      return this.profileService.setVisible(user.id, body.visible);
-    } catch (error) {
-      console.error(error)
-    }
+    return this.profileService.setVisible(user.id, body.visible);
+  }
+
+  @Get(`/skills`)
+  getSkills(): Array<SkillDTO> {
+    return skills;
   }
 }
