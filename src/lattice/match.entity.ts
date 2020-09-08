@@ -1,5 +1,5 @@
 import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
-import { IsDefined, IsEmail, IsMongoId, IsBoolean } from 'class-validator';
+import { IsDefined, IsMongoId, IsBoolean, IsString } from 'class-validator';
 
 @Entity({ name: `match` })
 export class Match {
@@ -7,15 +7,15 @@ export class Match {
   @IsMongoId()
   id: ObjectID;
 
-  @ObjectIdColumn()
+  @Column()
   @IsDefined()
-  @IsMongoId()
-  from: ObjectID;
+  @IsString()
+  from: string;
   
-  @ObjectIdColumn()
+  @Column()
   @IsDefined()
-  @IsMongoId()
-  to: ObjectID;
+  @IsString()
+  to: string;
 
   @Column()
   @IsDefined()

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus, HttpException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from '../match.entity';
@@ -11,6 +11,13 @@ export class MatchService {
   ) {}
 
   async swipe(match: MatchDTO): Promise<Match> {
+    const existing = await this.matches.findOne({ from: match.from, to: match.to });
+    if(existing) {
+      Logger.error(`${match.from} already swiped on ${match.to}`);
+      throw new HttpException(`Already swiped`, HttpStatus.BAD_REQUEST);
+    }
+
+    Logger.log(`${match.from} swiping on ${match.to}`);
     const newMatch = this.matches.create(match);
     return this.matches.save(newMatch);
   }

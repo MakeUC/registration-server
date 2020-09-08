@@ -1,7 +1,8 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getConnection, Not } from 'typeorm';
+import { Repository } from 'typeorm';
 import { validateOrReject } from 'class-validator';
+import { ObjectID } from 'mongodb';
 import { Match } from '../match.entity';
 import { ScoreService } from './score.service';
 import { ProfileDTO, ScoredProfileDTO } from './profile.dto';
@@ -16,15 +17,14 @@ export class ProfileService {
   ) {}
 
   private async getMatches(from: User): Promise<Array<Match>> {
-    return this.matches.find({ from: from.id });
+    return this.matches.find({ from: from.id.toString() });
   }
 
   private async getUnscoredProfiles(from: User): Promise<Array<User>> {
     const matches = await this.getMatches(from);
-    const matchedUsers = matches.map(match => match.to);
+    const matchedUsers = matches.map(match => new ObjectID(match.to));
 
-    const coll = getConnection().getMongoRepository(User);
-    return coll.find({
+    return this.users.find({
       where: {
         visible: true,
         _id: { $not: { $in: [ ...matchedUsers, from.id ] } },
