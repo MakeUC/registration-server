@@ -64,8 +64,8 @@ export class AuthService {
 
     return this.jwtService.signAsync({ id: insertedUser.id });
   }
-
+/* 
   async sendResetLink(email: string): Promise<void> {
     return;
-  }
+  } */
 }

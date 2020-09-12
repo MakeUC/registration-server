@@ -7,6 +7,7 @@ import { StatsIntegrationModule } from './stats-integration/stats.module';
 import { AppController } from './app.controller';
 import { User } from './lattice/user.entity';
 import { Match } from './lattice/match.entity';
+import { Notification } from './lattice/notification.entity';
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -15,7 +16,7 @@ const databaseUrl = process.env.DATABASE_URL;
     TypeOrmModule.forRoot({
       type: `mongodb`,
       url: databaseUrl,
-      entities: [Registrant, User, Match]
+      entities: [Registrant, User, Match, Notification]
     }),
     RegistrationModule,
     StatsIntegrationModule,
