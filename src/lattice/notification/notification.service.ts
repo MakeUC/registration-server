@@ -1,9 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { setVapidDetails, sendNotification } from 'web-push';
 import { Notification } from '../notification.entity';
 import { User } from '../user.entity';
 import { NotificationDetailsDTO } from './notification-details.dto';
+import { PushSubscription } from './push-subscription.dto';
+
+const publicKey = process.env.LATTICE_PUSH_PUBLIC_KEY;
+const privateKey = process.env.LATTICE_PUSH_PRIVATE_KEY;
+
+setVapidDetails(`https://makeuc.io`, publicKey, privateKey);
 
 @Injectable()
 export class NotificationService {
@@ -12,8 +19,22 @@ export class NotificationService {
     @InjectRepository(Notification) private notifications: Repository<Notification>,
   ) {}
 
-  private async createNotification(from: string, to: string): Promise<Notification> {
-    const notification = this.notifications.create({ from, to, read: false });
+  private async createNotification(from: User, to: User): Promise<Notification> {
+    from.pushSubscriptions?.forEach(async sub => {
+      try {
+        Logger.log(`Sending match notification to ${from.email}`);
+        await this.sendPushNotification(sub, `You were matched with ${to.name}`);
+        Logger.log(`Sent match notification to ${from.email}`);
+      } catch(err) {
+        Logger.error(`Could not push notification: ${err.message}`);
+      }
+    });
+
+    const notification = this.notifications.create({
+      from: from.id.toString(),
+      to: to.id.toString(),
+      read: false
+    });
     return this.notifications.save(notification);
   }
 
@@ -32,10 +53,17 @@ export class NotificationService {
     return { notification, to };
   }
 
+  private async sendPushNotification(sub: PushSubscription, data: string): Promise<unknown> {
+    return sendNotification(sub, data);
+  };
+
   async createNotificationForBoth(a: string, b: string): Promise<[Notification, Notification]> {
+    const userA = await this.users.findOne(a);
+    const userB = await this.users.findOne(b);
+
     return [
-      await this.createNotification(a, b),
-      await this.createNotification(b, a)
+      await this.createNotification(userA, userB),
+      await this.createNotification(userB, userA)
     ];
   }
 
@@ -46,15 +74,19 @@ export class NotificationService {
     );
   }
 
-  async getNotificationDetails(from: string, id: string): Promise<NotificationDetailsDTO> {
-    const notification = await this.notifications.findOne({ id, from });
-    return this.hydrateNotification(notification);
-  }
-
   async readNotifications(from: string): Promise<void> {
     const notifications = await this.notifications.find({ from, read: false });
     await this.notifications.save(
       notifications.map(notification => ({ ...notification, read: true }))
     );
+  }
+
+  async createSubscription(userId: string, sub: PushSubscription): Promise<User> {
+    const user = await this.users.findOne(userId);
+
+    if(!user.pushSubscriptions) user.pushSubscriptions = [];
+    user.pushSubscriptions.push(sub);
+    
+    return this.users.save(user);
   }
 }

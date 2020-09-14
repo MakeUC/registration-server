@@ -1,9 +1,11 @@
-import { Controller, Get, UseGuards, Post } from '@nestjs/common';
+import { Controller, Get, UseGuards, Post, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUserDTO } from '../auth/dtos';
 import { CurrentUser } from '../auth/currentuser.decorator';
+import { User } from '../user.entity';
 import { NotificationService } from './notification.service';
 import { NotificationDetailsDTO } from './notification-details.dto';
+import { PushSubscription } from './push-subscription.dto';
 
 @Controller(`notification`)
 @UseGuards(AuthGuard(`jwt`))
@@ -18,5 +20,10 @@ export class NotificationController {
   @Post(`/read`)
   readNotifications(@CurrentUser() user: CurrentUserDTO): Promise<void> {
     return this.notificationService.readNotifications(user.id);
+  }
+
+  @Post(`/subscribe`)
+  createSubscription(@CurrentUser() user: CurrentUserDTO, @Body() sub: PushSubscription): Promise<User> {
+    return this.notificationService.createSubscription(user.id, sub);
   }
 }

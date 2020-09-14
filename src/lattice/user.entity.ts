@@ -5,6 +5,7 @@ import {
   IsArray, ArrayMaxSize, ArrayUnique,
   IsString, MaxLength, IsBoolean
 } from 'class-validator';
+import { PushSubscription } from './notification/push-subscription.dto';
 
 @Entity({ name: `user` })
 export class User {
@@ -68,6 +69,10 @@ export class User {
   @Column({ default: false })
   @IsBoolean()
   visible: boolean
+
+  @Column({ default: [] })
+  @IsArray()
+  pushSubscriptions: PushSubscription[]
 
   @BeforeInsert()
   async hashPassword(): Promise<void> {
