@@ -1,6 +1,7 @@
 import { Module, HttpModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RegistrationController } from './registration.controller';
+import { AdminController } from './admin.controller';
 import { RegistrationService } from './registrant.service';
 import { Registrant } from './registrant.entity';
 import { FileService } from './file.service';
@@ -12,7 +13,7 @@ import { WebhookService } from './webhook.service';
     TypeOrmModule.forFeature([ Registrant ]),
     HttpModule
   ],
-  controllers: [RegistrationController],
+  controllers: [RegistrationController, AdminController],
   providers: [
     RegistrationService,
     FileService,

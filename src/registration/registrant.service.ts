@@ -67,4 +67,11 @@ export class RegistrationService {
     await this.registrants.save(registrant);
     return true;
   }
+
+  async sendSecondVerification(): Promise<void> {
+    Logger.log(`Sending verification email to all unverified registrants`);
+    const registrants = await this.registrants.find({ isVerified: null });
+    Logger.log(`Found ${registrants.length} unverified registrants`);
+    registrants.forEach(registrant => this.emailService.sendVerificationEmail(registrant));
+  }
 }
