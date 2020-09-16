@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { setVapidDetails, sendNotification } from 'web-push';
@@ -6,6 +6,7 @@ import { Notification } from '../notification.entity';
 import { User } from '../user.entity';
 import { NotificationDetailsDTO } from './notification-details.dto';
 import { PushSubscription } from './push-subscription.dto';
+import { Subscription } from '../subscription.entity';
 
 const publicKey = process.env.LATTICE_PUSH_PUBLIC_KEY;
 const privateKey = process.env.LATTICE_PUSH_PRIVATE_KEY;
@@ -17,16 +18,19 @@ export class NotificationService {
   constructor(
     @InjectRepository(User) private users: Repository<User>,
     @InjectRepository(Notification) private notifications: Repository<Notification>,
+    @InjectRepository(Subscription) private subscriptions: Repository<Subscription>
   ) {}
 
   private async createNotification(from: User, to: User): Promise<Notification> {
-    from.pushSubscriptions?.forEach(async sub => {
+    const pushSubscriptions = await this.subscriptions.find({ userId: from.id.toString() });
+
+    pushSubscriptions?.forEach(async ps => {
       try {
         Logger.log(`Sending match notification to ${from.email}`);
-        await this.sendPushNotification(sub, `You were matched with ${to.name}`);
+        await this.sendPushNotification(ps.subscription, `You were matched with ${to.name}`);
         Logger.log(`Sent match notification to ${from.email}`);
       } catch(err) {
-        Logger.error(`Could not push notification: ${err.message}`);
+        Logger.error(`Could not push notification to ${from.email}: ${err.message}`);
       }
     });
 
@@ -81,12 +85,20 @@ export class NotificationService {
     );
   }
 
-  async createSubscription(userId: string, sub: PushSubscription): Promise<User> {
-    const user = await this.users.findOne(userId);
+  async subscribe(userId: string, subscription: PushSubscription): Promise<Subscription> {
+    Logger.log(`Subscribing ${userId} for push notifications`);
+    const pushSubscription = this.subscriptions.create({ userId, subscription });
+    return this.subscriptions.save(pushSubscription);
+  }
 
-    if(!user.pushSubscriptions) user.pushSubscriptions = [];
-    user.pushSubscriptions.push(sub);
-    
-    return this.users.save(user);
+  async unsubscribe(userId: string, id: string): Promise<void> {
+    Logger.log(`Unsubscribing ${userId}:${id} from push notifications`);
+
+    const subscription = await this.subscriptions.findOne(id);
+    if(subscription.userId !== userId) {
+      throw new HttpException(`Invalid subscription id`, HttpStatus.NOT_FOUND);
+    }
+
+    await this.subscriptions.remove(subscription);
   }
 }

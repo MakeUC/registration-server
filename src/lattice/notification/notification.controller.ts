@@ -1,11 +1,11 @@
-import { Controller, Get, UseGuards, Post, Body } from '@nestjs/common';
+import { Controller, Get, UseGuards, Post, Body, Delete, Param } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUserDTO } from '../auth/dtos';
 import { CurrentUser } from '../auth/currentuser.decorator';
-import { User } from '../user.entity';
 import { NotificationService } from './notification.service';
 import { NotificationDetailsDTO } from './notification-details.dto';
 import { PushSubscription } from './push-subscription.dto';
+import { Subscription } from '../subscription.entity';
 
 @Controller(`notification`)
 @UseGuards(AuthGuard(`jwt`))
@@ -23,7 +23,12 @@ export class NotificationController {
   }
 
   @Post(`/subscribe`)
-  createSubscription(@CurrentUser() user: CurrentUserDTO, @Body() sub: PushSubscription): Promise<User> {
-    return this.notificationService.createSubscription(user.id, sub);
+  subscribe(@CurrentUser() user: CurrentUserDTO, @Body() sub: PushSubscription): Promise<Subscription> {
+    return this.notificationService.subscribe(user.id, sub);
+  }
+
+  @Delete(`/subscribe/:id`)
+  unsubscribe(@CurrentUser() user: CurrentUserDTO, @Param(`id`) id: string): Promise<void> {
+    return this.notificationService.unsubscribe(user.id, id);
   }
 }
