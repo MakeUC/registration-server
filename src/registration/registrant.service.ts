@@ -68,6 +68,22 @@ export class RegistrationService {
     return true;
   }
 
+  async verifyByEmail(email: string): Promise<Registrant> {
+    const registrant: Registrant = await this.registrants.findOne({ email });
+    if(!registrant) {
+      throw new HttpException(`Registrant not found`, HttpStatus.NOT_FOUND);
+    }
+    if(registrant.isVerified) {
+      return registrant;
+    }
+    registrant.isVerified = true;
+    registrant.verifiedAt = new Date();
+
+    await this.validateRegistrant(registrant);
+    await this.registrants.save(registrant);
+    return registrant;
+  }
+
   async sendSecondVerification(): Promise<void> {
     Logger.log(`Sending verification email to all unverified registrants`);
     const registrants = await this.registrants.find({ isVerified: null });

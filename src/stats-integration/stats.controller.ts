@@ -2,13 +2,19 @@ import { Controller, Post, Req, HttpException, HttpStatus, Logger } from '@nestj
 import { Request } from 'express';
 import { StatsService } from './stats.service';
 import { getAdapter } from './service-adapter';
+import { RegistrationService } from 'src/registration/registrant.service';
+
+const slackAdmins = process.env.SLACK_ADMINS.split(`,`);
 
 @Controller(`stats`)
 export class StatsController {
-  constructor(private statsService: StatsService) {}
+  constructor(
+    private statsService: StatsService,
+    private regService: RegistrationService
+  ) {}
 
   @Post()
-  register(@Req() req: Request): string | Promise<string> {
+  async register(@Req() req: Request): Promise<string> {
     const service = req.query.service as string;
       const adapter = getAdapter(service);
 
@@ -26,6 +32,16 @@ export class StatsController {
 
       if(statCommand === `help`) {
         return adapter.helpText;
+      }
+
+      if(statCommand.includes(`verify`)) {
+        const allowed = adapter.authenticateUser(req, slackAdmins);
+        if(!allowed) {
+          throw new HttpException(`You cannot perform this operation`, HttpStatus.UNAUTHORIZED);
+        }
+        const [, email] = statCommand.split(` `);
+        const registrant = await this.regService.verifyByEmail(email);
+        return `${registrant.fullName} (${registrant.email}) has been verified.`;
       }
       
       return this.statsService.getStat(statCommand);

@@ -20,5 +20,6 @@ import { WebhookService } from './webhook.service';
     EmailService,
     WebhookService
   ],
+  exports: [RegistrationService]
 })
 export class RegistrationModule {}

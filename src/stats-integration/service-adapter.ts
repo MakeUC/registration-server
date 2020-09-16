@@ -6,6 +6,7 @@ export type StatCommand = `number` | `genders` | `ethnicities` | `majors` | `sch
 export interface ServiceAdapter {
   helpText: string
   authenticateRequest(req: Request): boolean | Promise<boolean>
+  authenticateUser?(req: Request, allowed: string[]): boolean
   parseRequest(req: Request): StatCommand
   sendMessage(text: string): Promise<any>
 }
