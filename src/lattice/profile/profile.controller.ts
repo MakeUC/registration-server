@@ -1,6 +1,6 @@
-import { Controller, Get, Put, Body, UseGuards, Post } from '@nestjs/common';
+import { Controller, Get, Put, Body, UseGuards, Post, Param } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from '../user.entity';
+import { Tour, User } from '../user.entity';
 import { CurrentUserDTO } from '../auth/dtos';
 import { CurrentUser } from '../auth/currentuser.decorator';
 import { ProfileService } from './profile.service';
@@ -40,5 +40,10 @@ export class ProfileController {
   @Get(`/skills`)
   getSkills(): Array<SkillDTO> {
     return skills;
+  }
+
+  @Post(`/tour/:tour`)
+  completeTour(@CurrentUser() user: CurrentUserDTO, @Param(`tour`) tour: Tour): Promise<void> {
+    return this.profileService.completeTour(user.id, tour);
   }
 }

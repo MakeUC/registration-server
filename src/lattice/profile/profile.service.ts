@@ -6,7 +6,7 @@ import { ObjectID } from 'mongodb';
 import { Match } from '../match.entity';
 import { ScoreService } from './score.service';
 import { ProfileDTO, ScoredProfileDTO } from './profile.dto';
-import { User } from '../user.entity';
+import { User, Tour } from '../user.entity';
 
 @Injectable()
 export class ProfileService {
@@ -53,7 +53,8 @@ export class ProfileService {
       `slack`,
       `started`,
       `completed`,
-      `visible`
+      `visible`,
+      `completedTours`
     ]});
 
     if(!user) {
@@ -109,5 +110,20 @@ export class ProfileService {
     const profile = await this.users.findOne(id);
     profile.visible = !!visible;
     return this.users.save(profile);
+  }
+
+  async completeTour(id: string, tour: Tour): Promise<void> {
+    const profile = await this.users.findOne(id);
+
+    if(!profile.completedTours) {
+      profile.completedTours = [];
+    }
+
+    if(profile.completedTours.includes(tour)) {
+      return;
+    }
+
+    profile.completedTours.push(tour);
+    await this.users.save(profile);
   }
 }

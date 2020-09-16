@@ -6,6 +6,8 @@ import {
   IsString, MaxLength, IsBoolean
 } from 'class-validator';
 
+export type Tour = `profile` | `home` | `notification` | `reset`;
+
 @Entity({ name: `user` })
 export class User {
   @ObjectIdColumn()
@@ -68,6 +70,10 @@ export class User {
   @Column({ default: false })
   @IsBoolean()
   visible: boolean
+
+  @Column({ default: [] })
+  @IsArray()
+  completedTours: Tour[]
 
   @BeforeInsert()
   async hashPassword(): Promise<void> {
