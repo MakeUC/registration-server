@@ -14,10 +14,10 @@ export class User {
   @IsMongoId()
   id: ObjectID;
 
-  @ObjectIdColumn()
+  @Column()
   @IsDefined()
-  @IsMongoId()
-  registrantId: ObjectID;
+  @IsString()
+  registrantId: string;
 
   @Column()
   @IsDefined()
