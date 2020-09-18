@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { LoginDTO, RegisterDTO, ResetDTO } from './dtos';
+import { CurrentUser } from './currentuser.decorator';
+import { LoginDTO, RegisterDTO, ResetDTO, CurrentUserDTO, ChangePasswordDTO } from './dtos';
 
 @Controller(`auth`)
 export class AuthController {
@@ -24,5 +26,11 @@ export class AuthController {
   @Post(`/reset`)
   reset(@Body() credentials: ResetDTO): Promise<void> {
     return this.authService.sendResetLink(credentials.email);
+  }
+
+  @Put(`/password`)
+  @UseGuards(AuthGuard(`jwt`))
+  changePassword(@CurrentUser() user: CurrentUserDTO, @Body() credentials: ChangePasswordDTO): Promise<void> {
+    return this.authService.changePassword(user.id, credentials.oldPassword, credentials.newPassword);
   }
 }

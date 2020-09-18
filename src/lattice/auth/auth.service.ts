@@ -65,6 +65,19 @@ export class AuthService {
     return this.jwtService.signAsync({ id: insertedUser.id });
   }
 
+  async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<void> {
+    const user = await this.users.findOne(userId);
+    const legit = await user.comparePassword(oldPassword);
+
+    if(!legit) {
+      throw new HttpException(`Old password is invalid`, HttpStatus.UNAUTHORIZED);
+    }
+
+    user.password = newPassword;
+
+    await this.users.save(user);
+  }
+
   async sendResetLink(email: string): Promise<void> {
     return;
   }
