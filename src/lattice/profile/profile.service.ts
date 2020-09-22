@@ -85,7 +85,7 @@ export class ProfileService {
     const newProfile: User = Object.assign(profile, updates);
 
     try {
-      validateOrReject(newProfile);
+      await validateOrReject(newProfile);
     } catch(err) {
       Logger.error(`Validation error`);
       Logger.error(err);
