@@ -1,7 +1,7 @@
 import { Entity, Column, ObjectID, ObjectIdColumn, BeforeInsert } from 'typeorm';
 import { hash, compare } from 'bcrypt';
 import {
-  IsDefined, IsEmail, IsMongoId,
+  IsDefined, IsEmail,
   IsArray, ArrayMaxSize, ArrayUnique,
   IsString, MaxLength, IsBoolean
 } from 'class-validator';
@@ -11,12 +11,10 @@ export type Tour = `profile` | `home` | `notification` | `reset`;
 @Entity({ name: `user` })
 export class User {
   @ObjectIdColumn()
-  @IsMongoId()
   id: ObjectID;
 
   @Column()
   @IsDefined()
-  @IsString()
   registrantId: string;
 
   @Column()
@@ -37,7 +35,7 @@ export class User {
   @IsArray()
   @ArrayMaxSize(6)
   @ArrayUnique()
-  @IsMongoId({ each: true })
+  @IsString({ each: true })
   skills: string[]
 
   @Column()
@@ -51,7 +49,7 @@ export class User {
   @IsArray()
   @ArrayMaxSize(3)
   @ArrayUnique()
-  @IsMongoId({ each: true })
+  @IsString({ each: true })
   lookingFor: string[]
 
   @Column()
