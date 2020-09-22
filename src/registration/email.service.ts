@@ -52,4 +52,8 @@ export class EmailService {
       Logger.error(`Verification email could not be sent to ${registrant.email}: ${err.message}`);
     });
   }
+
+  async sendEmail(msg: sgMail.MailDataRequired): Promise<void> {
+    await sgMail.send(msg);
+  }
 }

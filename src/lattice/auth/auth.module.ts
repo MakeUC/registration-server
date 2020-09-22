@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { EmailService } from 'src/registration/email.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
@@ -21,7 +22,7 @@ const secretKey = process.env.LATTICE_SECRET_KEY;
     JwtModule.register({ secret: secretKey })
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy],
+  providers: [AuthService, LocalStrategy, EmailService],
   exports: [PassportModule]
 })
 export class AuthModule {}

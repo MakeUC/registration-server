@@ -2,7 +2,7 @@ import { Controller, Get, Post, Put, Body, Param, UseGuards } from '@nestjs/comm
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './currentuser.decorator';
-import { LoginDTO, RegisterDTO, ResetDTO, CurrentUserDTO, ChangePasswordDTO } from './dtos';
+import { LoginDTO, RegisterDTO, ResetRequestDTO, CurrentUserDTO, ChangePasswordDTO, ResetPasswordDTO } from './dtos';
 
 @Controller(`auth`)
 export class AuthController {
@@ -24,8 +24,18 @@ export class AuthController {
   }
 
   @Post(`/reset`)
-  reset(@Body() credentials: ResetDTO): Promise<void> {
+  sendResetLink(@Body() credentials: ResetRequestDTO): Promise<void> {
     return this.authService.sendResetLink(credentials.email);
+  }
+
+  @Get(`/reset/:resetToken`)
+  getResetInfo(@Param(`resetToken`) resetToken: string): Promise<string> {
+    return this.authService.getResetInfo(resetToken);
+  }
+
+  @Put(`/reset`)
+  resetPassword(@Body() credentials: ResetPasswordDTO): Promise<void> {
+    return this.authService.resetPassword(credentials.resetToken, credentials.password);
   }
 
   @Put(`/password`)

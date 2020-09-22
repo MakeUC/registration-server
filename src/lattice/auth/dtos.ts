@@ -8,8 +8,19 @@ export class RegisterDTO {
   password: string
 }
 
-export class ResetDTO {
+export class ResetRequestDTO {
   email: string
+}
+
+export class ResetTokenDTO {
+  id: string
+  currentPassword: string
+  createdAt: Date
+}
+
+export class ResetPasswordDTO {
+  resetToken: string
+  password: string
 }
 
 export class ChangePasswordDTO {
