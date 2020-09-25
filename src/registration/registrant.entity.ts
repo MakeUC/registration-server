@@ -1,7 +1,7 @@
 import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 import { IsDefined, IsEmail } from 'class-validator';
 
-@Entity()
+@Entity({ name: `registrant` })
 export class Registrant {
   @ObjectIdColumn()
   id: ObjectID;
