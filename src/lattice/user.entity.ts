@@ -58,19 +58,15 @@ export class User {
   slack: string
 
   @Column({ default: false })
-  @IsBoolean()
   started: boolean
 
   @Column({ default: false })
-  @IsBoolean()
   completed: boolean
 
   @Column({ default: false })
-  @IsBoolean()
   visible: boolean
 
   @Column({ default: [] })
-  @IsArray()
   completedTours: Tour[]
 
   @BeforeInsert()
