@@ -49,6 +49,10 @@ export const SlackAdapter: ServiceAdapter = {
 	
 		return timingSafeEqual(Buffer.from(signature, 'utf8'), Buffer.from(hash, 'utf8'));
 	},
+	authenticateUser(req: Request, allowed: string[]): boolean {
+		const userId = req.body.user_id;
+		return allowed.includes(userId);
+	},
 	parseRequest(req: Request): StatCommand {
 		return req.body.text;
 	},

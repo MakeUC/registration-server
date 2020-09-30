@@ -9,6 +9,7 @@ export interface ServiceAdapter {
   returnOnlyNumber: boolean
 
   authenticateRequest(req: Request): boolean | Promise<boolean>
+  authenticateUser?(req: Request, allowed: string[]): boolean
   parseRequest(req: Request): StatCommand
   sendMessage(text: string): Promise<any>
 }
