@@ -40,7 +40,8 @@ export class ProfileService {
 
     const unscoredProfiles = await this.getUnscoredProfiles(from);
     const scoredProfiles = this.scoreService.scoreAndSortProfiles(from, unscoredProfiles);
-    return scoredProfiles;
+    scoredProfiles.splice(10);
+    return scoredProfiles.reverse();
   }
 
   async getProfile(id: string): Promise<User> {
