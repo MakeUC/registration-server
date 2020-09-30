@@ -8,26 +8,26 @@ export class StatsController {
   constructor(private statsService: StatsService) {}
 
   @Post()
-  register(@Req() req: Request): string | Promise<string> {
+  register(@Req() req: Request): string | number | Promise<string | number> {
     const service = req.query.service as string;
-      const adapter = getAdapter(service);
+    const adapter = getAdapter(service);
 
-      if(!adapter) {
-        Logger.error(`Invalid service string`);
-        throw new HttpException(`Invalid service string`, HttpStatus.UNAUTHORIZED);
-      }
+    if(!adapter) {
+      Logger.error(`Invalid service string`);
+      throw new HttpException(`Invalid service string`, HttpStatus.UNAUTHORIZED);
+    }
 
-      if(!adapter.authenticateRequest(req)) {
-        Logger.error(`Verification failed`);
-        throw new HttpException(`Verification failed`, HttpStatus.FORBIDDEN);
-      }
+    if(!adapter.authenticateRequest(req)) {
+      Logger.error(`Verification failed`);
+      throw new HttpException(`Verification failed`, HttpStatus.FORBIDDEN);
+    }
 
-      const statCommand = adapter.parseRequest(req);
+    const statCommand = adapter.parseRequest(req);
 
-      if(statCommand === `help`) {
-        return adapter.helpText;
-      }
-      
-      return this.statsService.getStat(statCommand);
+    if(statCommand === `help`) {
+      return adapter.helpText;
+    }
+
+    return this.statsService.getStat(statCommand, adapter.returnOnlyNumber);
   }
 }

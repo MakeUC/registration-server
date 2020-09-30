@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { schedule } from 'node-cron';
 import { Registrant } from '../registration/registrant.entity';
 import { StatCommand, getAdapter } from './service-adapter';
-import { GenderStat, EthnicityStat, MajorStat, SchoolStat, DegreeStat, ExperienceStat } from './stats.dto';
+import { GenderStat, EthnicityStat, MajorStat, SchoolStat, DegreeStat, ExperienceStat, CountryStat } from './stats.dto';
 
-const statCommands: Array<StatCommand> = [`genders`, `ethnicities`, `majors`, `schools`, `degrees`, `experience`];
+const statCommands: Array<StatCommand> = [`genders`, `ethnicities`, `majors`, `schools`, `degrees`, `experience`, `countries`];
 const daily10PMCron = `0 0 22 * * *`;
 const dailyUpdateServices = [`slack`];
 const sortByNumber = (a, b) => b.number - a.number;
@@ -48,41 +49,43 @@ export class StatsService implements OnModuleInit {
     });
   }
 
-  getStat(command: StatCommand): Promise<string> {
+  getStat(command: StatCommand, returnOnlyNumber: boolean): Promise<string | number> {
     switch(command) {
       case `number`:
-        return this.getNumber();
+        return this.getNumber(returnOnlyNumber);
       case `genders`:
-        return this.getGenders();
+        return this.getGenders(returnOnlyNumber);
       case `ethnicities`:
-        return this.getEthnicities();
+        return this.getEthnicities(returnOnlyNumber);
       case `majors`:
-        return this.getMajors();
+        return this.getMajors(returnOnlyNumber);
       case `schools`:
-        return this.getSchools();
+        return this.getSchools(returnOnlyNumber);
       case `degrees`:
-        return this.getDegrees();
+        return this.getDegrees(returnOnlyNumber);
       case `experience`:
-        return this.getExperience();
+        return this.getExperience(returnOnlyNumber);
+      case `countries`:
+        return this.getCountries(returnOnlyNumber);
       default:
-        return this.getRandom(`Since you didn't tell me what you wanted to know, I got a random stat for you. `);
+        return this.getRandom(returnOnlyNumber, `Since you didn't tell me what you wanted to know, I got a random stat for you. `);
     };
   }
 
-  async getRandom(pre?: string): Promise<string> {
+  async getRandom(returnOnlyNumber = false, pre?: string): Promise<string> {
     const randomIndex = Math.floor(Math.random() * statCommands.length);
     const randomStatCommand = statCommands[randomIndex];
-    const text = await this.getStat(randomStatCommand);
+    const text = await this.getStat(randomStatCommand, returnOnlyNumber) as string;
 
     return pre ? `${pre}${text}` : text;
   }
-  
-  async getNumber(): Promise<string> {
+
+  async getNumber(returnOnlyNumber = false): Promise<string | number> {
     const number = await this.registrants.count({});
-    return `We have a total of ${number} registrants!`;
+    return returnOnlyNumber ? number : `We have a total of ${number} registrants!`;
   }
 
-  async getGenders(): Promise<string> {
+  async getGenders(returnOnlyNumber = false): Promise<string> {
     const allRegistrants = await this.registrants.find();
     const genders: GenderStat[] = [];
     allRegistrants.forEach(registrant => {
@@ -99,7 +102,7 @@ export class StatsService implements OnModuleInit {
     return `Here is a breakdown of the genders of registrants: ${genders.map(ge => ` ${ge.gender}: ${Math.round((ge.number / total) * 100)}%`)}`;
   }
 
-  async getEthnicities(): Promise<string> {
+  async getEthnicities(returnOnlyNumber = false): Promise<string> {
     const allRegistrants = await this.registrants.find();
     const ethnicities: EthnicityStat[] = [];
     allRegistrants.forEach(registrant => {
@@ -116,7 +119,7 @@ export class StatsService implements OnModuleInit {
     return `Here is a breakdown of the ethnicities of registrants: ${ethnicities.map(et => ` ${et.ethnicity}: ${Math.round((et.number / total) * 100)}%`)}`;
   }
 
-  async getMajors(): Promise<string> {
+  async getMajors(returnOnlyNumber = false): Promise<string | number> {
     const allRegistrants = await this.registrants.find();
     const majors: MajorStat[] = [];
     allRegistrants.forEach(registrant => {
@@ -132,10 +135,10 @@ export class StatsService implements OnModuleInit {
 
     const [ first, second, third ] = majors;
 
-    return `We have a total of ${majors.length} majors. Here are the top 3: ${first.major} (${first.number} registrants), ${second.major} (${second.number} registrants), ${third.major} (${third.number} registrants)`;
+    return returnOnlyNumber ? majors.length : `We have a total of ${majors.length} majors. Here are the top 3: ${first.major} (${first.number} registrants), ${second.major} (${second.number} registrants), ${third.major} (${third.number} registrants)`;
   }
 
-  async getSchools(): Promise<string> {
+  async getSchools(returnOnlyNumber = false): Promise<string | number> {
     const allRegistrants = await this.registrants.find();
     const schools: SchoolStat[] = [];
     allRegistrants.forEach(registrant => {
@@ -151,10 +154,10 @@ export class StatsService implements OnModuleInit {
 
     const [ first, second, third ] = schools;
 
-    return `We have a registrants from a total of ${schools.length} schools. Here are the top 3: ${first.school} (${first.number} registrants), ${second.school} (${second.number} registrants), ${third.school} (${third.number} registrants)`;
+    return returnOnlyNumber ? schools.length : `We have a registrants from a total of ${schools.length} schools. Here are the top 3: ${first.school} (${first.number} registrants), ${second.school} (${second.number} registrants), ${third.school} (${third.number} registrants)`;
   }
 
-  async getDegrees(): Promise<string> {
+  async getDegrees(returnOnlyNumber = false): Promise<string> {
     const allRegistrants = await this.registrants.find();
     const degrees: DegreeStat[] = [];
     allRegistrants.forEach(registrant => {
@@ -171,7 +174,7 @@ export class StatsService implements OnModuleInit {
     return `Here is a breakdown of the degrees of registrants: ${degrees.map(de => ` ${de.degree}: ${Math.round((de.number / total) * 100)}%`)}`;
   }
 
-  async getExperience(): Promise<string> {
+  async getExperience(returnOnlyNumber = false): Promise<string> {
     const allRegistrants = await this.registrants.find();
     const experiences: ExperienceStat[] = [];
     allRegistrants.forEach(registrant => {
@@ -186,5 +189,24 @@ export class StatsService implements OnModuleInit {
     const total = await this.registrants.count();
 
     return `Here is a breakdown of the registrants' prior hackathon experience: ${experiences.map(ex => ` ${ex.hackathonsAttended}: ${Math.round((ex.number / total) * 100)}%`)}`;
+  }
+
+  async getCountries(returnOnlyNumber = false): Promise<string | number> {
+    const allRegistrants = await this.registrants.find();
+    const countries: CountryStat[] = [];
+    allRegistrants.forEach(registrant => {
+      const countryStat = countries.find(({ country }) => country === registrant.country);
+      if(countryStat) {
+        countryStat.number++
+      } else {
+        countries.push({ country: registrant.country, number: 1 });
+      }
+    });
+
+    countries.sort(sortByNumber);
+
+    const total = await this.registrants.count();
+
+    return returnOnlyNumber ? countries.length : `Here is a breakdown of the registrants' countries: ${countries.map(ex => ` ${ex.country}: ${Math.round((ex.number / total) * 100)}%`)}`;
   }
 }
