@@ -1,10 +1,13 @@
 import { Request } from 'express';
 import { SlackAdapter } from './slack-adapter';
+import { WebAdapter } from './web-adapter';
 
-export type StatCommand = `number` | `genders` | `ethnicities` | `majors` | `schools` | `degrees` | `experience` | `help`;
+export type StatCommand = `number` | `genders` | `ethnicities` | `majors` | `schools` | `degrees` | `experience` | `help` | `countries`;
 
 export interface ServiceAdapter {
   helpText: string
+  returnOnlyNumber: boolean
+
   authenticateRequest(req: Request): boolean | Promise<boolean>
   authenticateUser?(req: Request, allowed: string[]): boolean
   parseRequest(req: Request): StatCommand
@@ -15,6 +18,8 @@ export const getAdapter = (service: string): ServiceAdapter => {
   switch (service) {
     case `slack`:
       return SlackAdapter
+    case `web`:
+      return WebAdapter
     default:
       return null;
   }

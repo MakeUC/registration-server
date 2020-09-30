@@ -14,24 +14,30 @@ export class StatsController {
   ) {}
 
   @Post()
-  async register(@Req() req: Request): Promise<string> {
+  async register(@Req() req: Request): Promise<string | number> {
     const service = req.query.service as string;
-      const adapter = getAdapter(service);
+    const adapter = getAdapter(service);
 
-      if(!adapter) {
-        Logger.error(`Invalid service string`);
-        throw new HttpException(`Invalid service string`, HttpStatus.UNAUTHORIZED);
-      }
+    if(!adapter) {
+      Logger.error(`Invalid service string`);
+      throw new HttpException(`Invalid service string`, HttpStatus.UNAUTHORIZED);
+    }
 
-      if(!adapter.authenticateRequest(req)) {
-        Logger.error(`Verification failed`);
-        throw new HttpException(`Verification failed`, HttpStatus.FORBIDDEN);
-      }
+    if(!adapter.authenticateRequest(req)) {
+      Logger.error(`Verification failed`);
+      throw new HttpException(`Verification failed`, HttpStatus.FORBIDDEN);
+    }
 
-      const statCommand = adapter.parseRequest(req);
+    const statCommand = adapter.parseRequest(req);
 
-      if(statCommand === `help`) {
-        return adapter.helpText;
+    if(statCommand === `help`) {
+      return adapter.helpText;
+    }
+
+    if(statCommand.includes(`verify`)) {
+      const allowed = adapter.authenticateUser(req, slackAdmins);
+      if(!allowed) {
+        throw new HttpException(`You cannot perform this operation`, HttpStatus.UNAUTHORIZED);
       }
 
       if(statCommand.includes(`verify`)) {

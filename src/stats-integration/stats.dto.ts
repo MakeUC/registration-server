@@ -9,3 +9,5 @@ export type SchoolStat = { school: string, number?: number }
 export type DegreeStat = { degree: string, number?: number }
 
 export type ExperienceStat = { hackathonsAttended: string, number?: number }
+
+export type CountryStat = { country: string, number?: number }

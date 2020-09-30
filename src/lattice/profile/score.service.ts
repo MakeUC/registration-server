@@ -20,7 +20,7 @@ export class ScoreService {
   }
 
   private sortProfilesByScore(profiles: Array<ScoredProfileDTO>): Array<ScoredProfileDTO> {
-    return profiles.sort((a, b) => a.score - b.score);
+    return profiles.sort((a, b) => b.score - a.score);
   }
 
   scoreAndSortProfiles(from: ProfileDTO, profiles: Array<ProfileDTO>): Array<ScoredProfileDTO> {

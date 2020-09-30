@@ -29,9 +29,12 @@ export const SlackAdapter: ServiceAdapter = {
 		\`/regbot degrees\`: I'll get a breakdown of the degree levels of our registrants.
 
 		\`/regbot experience\`: I'll get a breakdown of the registrants' prior hackathon experience.
+		
+		\`/regbot countries\`: I'll get a breakdown of the registrants' countries.
 
 		\`/regbot help\`: Make me repeat myself.
 	`,
+	returnOnlyNumber: false,
 	authenticateRequest(req: Request): boolean {
 		const timestamp = req.get(`X-Slack-Request-Timestamp`);
 		const signature = req.get(`X-Slack-Signature`);
