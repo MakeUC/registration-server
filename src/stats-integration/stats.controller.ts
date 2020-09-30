@@ -39,11 +39,17 @@ export class StatsController {
       if(!allowed) {
         throw new HttpException(`You cannot perform this operation`, HttpStatus.UNAUTHORIZED);
       }
-      const [, email] = statCommand.split(` `);
-      const registrant = await this.regService.verifyByEmail(email);
-      return `${registrant.fullName} (${registrant.email}) has been verified.`;
-    }
-    
-    return this.statsService.getStat(statCommand, adapter.returnOnlyNumber);
+
+      if(statCommand.includes(`verify`)) {
+        const allowed = adapter.authenticateUser(req, slackAdmins);
+        if(!allowed) {
+          throw new HttpException(`You cannot perform this operation`, HttpStatus.UNAUTHORIZED);
+        }
+        const [, email] = statCommand.split(` `);
+        const registrant = await this.regService.verifyByEmail(email);
+        return `${registrant.fullName} (${registrant.email}) has been verified.`;
+      }
+      
+      return this.statsService.getStat(statCommand);
   }
 }
