@@ -43,6 +43,11 @@ export class StatsController {
       const registrant = await this.regService.verifyByEmail(email);
       return `${registrant.fullName} (${registrant.email}) has been verified.`;
     }
+
+    if(statCommand.includes(`checkin`)) {
+      const [, email] = statCommand.split(` `);
+      return this.regService.checkIn(email);
+    }
     
     return this.statsService.getStat(statCommand, adapter.returnOnlyNumber);
   }

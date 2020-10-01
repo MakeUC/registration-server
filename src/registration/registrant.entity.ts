@@ -61,4 +61,10 @@ export class Registrant {
 
   @Column()
   verifiedAt: Date
+
+  @Column()
+  isCheckedIn: boolean
+
+  @Column()
+  checkedInAt: Date
 }

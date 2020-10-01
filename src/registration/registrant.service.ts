@@ -90,4 +90,23 @@ export class RegistrationService {
     Logger.log(`Found ${registrants.length} unverified registrants`);
     registrants.forEach(registrant => this.emailService.sendVerificationEmail(registrant));
   }
+
+  async checkIn(email: string): Promise<string> {
+    const registrant = await this.registrants.findOne({ email, isVerified: true });
+
+    if(!registrant) {
+      return `Couldn't find a registration with the email ${email}. Please make sure that the email is correct, and you have verified your email.`;
+    }
+
+    if(registrant.isCheckedIn) {
+      return `Hello ${registrant.fullName}, you are already checked in!`;
+    }
+
+    registrant.isCheckedIn = true;
+    registrant.checkedInAt = new Date();
+
+    await this.registrants.save(registrant);
+
+    return `Hello ${registrant.fullName}, you are successfully checked in, welcome to MakeUC!`;
+  }
 }
