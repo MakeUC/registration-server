@@ -12,7 +12,11 @@ const fixedEncodeURIComponent = (str: string) =>
 
 export const SlackAdapter: ServiceAdapter = {
 	helpText: `
-		Hello! I am MakeUC Registration Bot, but you can call me RegBot. I talk to our registration server and bring back some useful insight for you! You can think of me as your crystal ball into the 1s and 0s of the annoying BSON database called MongoDB and this stupid excuse of a programming language called Javascript.
+		Hello! I am MakeUC RegBot, your virtual hackathon companion. My primary purpose is to help you check in to the hackathon so that we know you participated. I can also bring some useful statistics about the participants.
+
+		Here is how you can check in to MakeUC and record your participationL
+
+		\`/regbot checkin <email>\`: Run this command with the email you used to register to MakeUC, and you will be checked in!
 
 		Here are some commands you can give me:
 
@@ -29,7 +33,7 @@ export const SlackAdapter: ServiceAdapter = {
 		\`/regbot degrees\`: I'll get a breakdown of the degree levels of our registrants.
 
 		\`/regbot experience\`: I'll get a breakdown of the registrants' prior hackathon experience.
-		
+
 		\`/regbot countries\`: I'll get a breakdown of the registrants' countries.
 
 		\`/regbot help\`: Make me repeat myself.
