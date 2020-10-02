@@ -10,6 +10,7 @@ import { WebhookService } from './webhook.service';
 
 // Set this to false when registration opens up again
 const isRegistrationClosed = process.env.REGISTRATION_STATUS === `closed`;
+const isCheckinClosed = process.env.CHECKIN_STATUS === `closed`;
 
 @Injectable()
 export class RegistrationService {
@@ -99,6 +100,10 @@ export class RegistrationService {
   }
 
   async checkIn(email: string): Promise<string> {
+    if(isCheckinClosed) {
+      return `Checkin is not open yet, please wait until checkin starts at 10 AM EST!`;
+    }
+
     const registrant = await this.registrants.findOne({ email, isVerified: true });
 
     if(!registrant) {
