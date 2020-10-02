@@ -9,7 +9,7 @@ import { EmailService } from './email.service';
 import { WebhookService } from './webhook.service';
 
 // Set this to false when registration opens up again
-const isRegistrationClosed = true;
+const isRegistrationClosed = process.env.REGISTRATION_STATUS === `closed`;
 
 @Injectable()
 export class RegistrationService {
