@@ -205,8 +205,8 @@ export class StatsService implements OnModuleInit {
 
     countries.sort(sortByNumber);
 
-    const total = await this.registrants.count();
+    const [ first, second, third ] = countries;
 
-    return returnOnlyNumber ? countries.length : `Here is a breakdown of the registrants' countries: ${countries.map(ex => ` ${ex.country}: ${Math.round((ex.number / total) * 100)}%`)}`;
+    return returnOnlyNumber ? countries.length : `We have a registrants from a total of ${countries.length} countries. Here are the top 3: ${first.country} (${first.number} registrants), ${second.country} (${second.number} registrants), ${third.country} (${third.number} registrants)`;
   }
 }
