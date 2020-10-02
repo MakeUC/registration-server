@@ -8,6 +8,9 @@ import { FileService } from './file.service';
 import { EmailService } from './email.service';
 import { WebhookService } from './webhook.service';
 
+// Set this to false when registration opens up again
+const isRegistrationClosed = true;
+
 @Injectable()
 export class RegistrationService {
   constructor(
@@ -28,6 +31,10 @@ export class RegistrationService {
   }
 
   async register(data: RegistrantDTO, resume: Express.Multer.File): Promise<Registrant> {
+    if(isRegistrationClosed) {
+      throw new HttpException(`Registration is closed for this year, please check us out next year!`, HttpStatus.FORBIDDEN);
+    }
+
     const existing = await this.registrants.find({ where: { email: data.email } });
     if(existing.length) {
       throw new HttpException(`Email already exists`, HttpStatus.BAD_REQUEST);
