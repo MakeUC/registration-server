@@ -97,7 +97,7 @@ export class StatsService implements OnModuleInit {
       }
     });
 
-    const total = await this.registrants.count();
+    const total = await this.registrants.count({ isCheckedIn: true });
 
     return `Here is a breakdown of the genders of registrants: ${genders.map(ge => ` ${ge.gender}: ${Math.round((ge.number / total) * 100)}%`)}`;
   }
@@ -114,7 +114,7 @@ export class StatsService implements OnModuleInit {
       }
     });
 
-    const total = await this.registrants.count();
+    const total = await this.registrants.count({ isCheckedIn: true });
 
     return `Here is a breakdown of the ethnicities of registrants: ${ethnicities.map(et => ` ${et.ethnicity}: ${Math.round((et.number / total) * 100)}%`)}`;
   }
@@ -169,7 +169,7 @@ export class StatsService implements OnModuleInit {
       }
     });
 
-    const total = await this.registrants.count();
+    const total = await this.registrants.count({ isCheckedIn: true });
 
     return `Here is a breakdown of the degrees of registrants: ${degrees.map(de => ` ${de.degree}: ${Math.round((de.number / total) * 100)}%`)}`;
   }
@@ -186,7 +186,7 @@ export class StatsService implements OnModuleInit {
       }
     });
 
-    const total = await this.registrants.count();
+    const total = await this.registrants.count({ isCheckedIn: true });
 
     return `Here is a breakdown of the registrants' prior hackathon experience: ${experiences.map(ex => ` ${ex.hackathonsAttended}: ${Math.round((ex.number / total) * 100)}%`)}`;
   }
