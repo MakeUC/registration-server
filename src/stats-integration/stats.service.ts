@@ -81,12 +81,12 @@ export class StatsService implements OnModuleInit {
   }
 
   async getNumber(returnOnlyNumber = false): Promise<string | number> {
-    const number = await this.registrants.count({});
-    return returnOnlyNumber ? number : `We have a total of ${number} registrants!`;
+    const number = await this.registrants.count({ isCheckedIn: true });
+    return returnOnlyNumber ? number : `We have a total of ${number} participants!`;
   }
 
   async getGenders(returnOnlyNumber = false): Promise<string> {
-    const allRegistrants = await this.registrants.find();
+    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
     const genders: GenderStat[] = [];
     allRegistrants.forEach(registrant => {
       const genderStat = genders.find(({ gender }) => gender === registrant.gender);
@@ -103,7 +103,7 @@ export class StatsService implements OnModuleInit {
   }
 
   async getEthnicities(returnOnlyNumber = false): Promise<string> {
-    const allRegistrants = await this.registrants.find();
+    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
     const ethnicities: EthnicityStat[] = [];
     allRegistrants.forEach(registrant => {
       const etnicityStat = ethnicities.find(({ ethnicity }) => ethnicity === registrant.ethnicity);
@@ -120,7 +120,7 @@ export class StatsService implements OnModuleInit {
   }
 
   async getMajors(returnOnlyNumber = false): Promise<string | number> {
-    const allRegistrants = await this.registrants.find();
+    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
     const majors: MajorStat[] = [];
     allRegistrants.forEach(registrant => {
       const majorStat = majors.find(({ major }) => major === registrant.major);
@@ -139,7 +139,7 @@ export class StatsService implements OnModuleInit {
   }
 
   async getSchools(returnOnlyNumber = false): Promise<string | number> {
-    const allRegistrants = await this.registrants.find();
+    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
     const schools: SchoolStat[] = [];
     allRegistrants.forEach(registrant => {
       const schoolStat = schools.find(({ school }) => school === registrant.school);
@@ -158,7 +158,7 @@ export class StatsService implements OnModuleInit {
   }
 
   async getDegrees(returnOnlyNumber = false): Promise<string> {
-    const allRegistrants = await this.registrants.find();
+    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
     const degrees: DegreeStat[] = [];
     allRegistrants.forEach(registrant => {
       const degreeStat = degrees.find(({ degree }) => degree === registrant.degree);
@@ -175,7 +175,7 @@ export class StatsService implements OnModuleInit {
   }
 
   async getExperience(returnOnlyNumber = false): Promise<string> {
-    const allRegistrants = await this.registrants.find();
+    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
     const experiences: ExperienceStat[] = [];
     allRegistrants.forEach(registrant => {
       const experienceStat = experiences.find(({ hackathonsAttended }) => hackathonsAttended === registrant.hackathonsAttended);
@@ -192,7 +192,7 @@ export class StatsService implements OnModuleInit {
   }
 
   async getCountries(returnOnlyNumber = false): Promise<string | number> {
-    const allRegistrants = await this.registrants.find();
+    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
     const countries: CountryStat[] = [];
     allRegistrants.forEach(registrant => {
       const countryStat = countries.find(({ country }) => country === registrant.country);
