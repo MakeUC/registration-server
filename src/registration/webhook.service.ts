@@ -1,7 +1,7 @@
 import { Injectable, Logger, HttpService } from "@nestjs/common";
 import { RegistrantDTO } from "./registrant.dto";
 
-const slackQuestionsWebhookUrl = process.env.SLACK_QUESTION_WEBHOOK_URL;
+const questionsWebhookUrl = process.env.QUESTION_WEBHOOK_URL;
 
 @Injectable()
 export class WebhookService {
@@ -15,7 +15,7 @@ export class WebhookService {
       ${registrantDTO.questions}
     `;
 
-    this.http.post(slackQuestionsWebhookUrl, { text }).subscribe({
+    this.http.post(questionsWebhookUrl, { text }).subscribe({
       next: result => {
         Logger.log(`Webhook post successful for question sent by ${registrantDTO.email}: ${result.status}`)
       },
