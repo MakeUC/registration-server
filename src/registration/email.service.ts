@@ -41,8 +41,8 @@ export class EmailService {
     const msg: sgMail.MailDataRequired = {
       to: registrant.email,
       from: this.fromAddress,
-      subject: 'MakeUC registration',
-      text: 'Confirm your email with MakeUC',
+      subject: 'MakeUC Registration',
+      text: 'Confirm Your Email with MakeUC',
       html: this.template({ fullName, verificationUrl, coverImgUrl })
     };
 
