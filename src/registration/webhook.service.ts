@@ -11,14 +11,14 @@ export class WebhookService {
   ) {}
 
   sendQuestionWebhook(registrantDTO: RegistrantDTO): void {
-    const text = `
+    const message = `
       Question by ${registrantDTO.fullName} (${registrantDTO.email}):
       ${registrantDTO.questions}
     `;
 
     this.http.post(
       questionsWebhookUrl,
-      { text },
+      { message },
       { headers: { Authorization: `Bearer ${DISCORD_BOT_SERVER_KEY}` } }
     ).subscribe({
       next: result => {
