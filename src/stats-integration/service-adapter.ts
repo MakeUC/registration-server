@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { DiscordAdapter } from './discord-adapter';
 import { SlackAdapter } from './slack-adapter';
 import { WebAdapter } from './web-adapter';
 
@@ -18,6 +19,8 @@ export const getAdapter = (service: string): ServiceAdapter => {
   switch (service) {
     case `slack`:
       return SlackAdapter
+    case `discord`:
+      return DiscordAdapter
     case `web`:
       return WebAdapter
     default:

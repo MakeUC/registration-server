@@ -2,6 +2,7 @@ import { Injectable, Logger, HttpService } from "@nestjs/common";
 import { RegistrantDTO } from "./registrant.dto";
 
 const questionsWebhookUrl = process.env.QUESTION_WEBHOOK_URL;
+const DISCORD_BOT_SERVER_KEY = process.env.DISCORD_BOT_SERVER_KEY;
 
 @Injectable()
 export class WebhookService {
@@ -15,7 +16,11 @@ export class WebhookService {
       ${registrantDTO.questions}
     `;
 
-    this.http.post(questionsWebhookUrl, { text }).subscribe({
+    this.http.post(
+      questionsWebhookUrl,
+      { text },
+      { headers: { Authorization: `Bearer ${DISCORD_BOT_SERVER_KEY}` } }
+    ).subscribe({
       next: result => {
         Logger.log(`Webhook post successful for question sent by ${registrantDTO.email}: ${result.status}`)
       },

@@ -9,7 +9,7 @@ import { GenderStat, EthnicityStat, MajorStat, SchoolStat, DegreeStat, Experienc
 
 const statCommands: Array<StatCommand> = [`genders`, `ethnicities`, `majors`, `schools`, `degrees`, `experience`, `countries`];
 const daily10PMCron = `0 0 22 * * *`;
-const dailyUpdateServices = [`slack`];
+const dailyUpdateServices = [`discord`];
 const sortByNumber = (a, b) => b.number - a.number;
 
 @Injectable()
@@ -31,7 +31,7 @@ export class StatsService implements OnModuleInit {
 
   async sendUpdate(services: Array<string>): Promise<void> {
     const text = `
-      Daily registration update brought to you by the one and only, RegBot!
+      Daily registration update brought to you by the one and only, MakeIt!
       ${await this.getNumber()}
       ${await this.getRandom()}
     `;
@@ -81,12 +81,12 @@ export class StatsService implements OnModuleInit {
   }
 
   async getNumber(returnOnlyNumber = false): Promise<string | number> {
-    const number = await this.registrants.count({ isCheckedIn: true });
+    const number = await this.registrants.count();
     return returnOnlyNumber ? number : `We have a total of ${number} participants!`;
   }
 
   async getGenders(returnOnlyNumber = false): Promise<string> {
-    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
+    const allRegistrants = await this.registrants.find();
     const genders: GenderStat[] = [];
     allRegistrants.forEach(registrant => {
       const genderStat = genders.find(({ gender }) => gender === registrant.gender);
@@ -97,13 +97,15 @@ export class StatsService implements OnModuleInit {
       }
     });
 
-    const total = await this.registrants.count({ isCheckedIn: true });
+    const total = await this.registrants.count();
 
-    return `Here is a breakdown of the genders of registrants: ${genders.map(ge => ` ${ge.gender}: ${Math.round((ge.number / total) * 100)}%`)}`;
+    return `Here is a breakdown of the genders of registrants: ${genders.map(ge => `
+      ${ge.gender}: ${Math.round((ge.number / total) * 100)}%`
+    )}`;
   }
 
   async getEthnicities(returnOnlyNumber = false): Promise<string> {
-    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
+    const allRegistrants = await this.registrants.find();
     const ethnicities: EthnicityStat[] = [];
     allRegistrants.forEach(registrant => {
       const etnicityStat = ethnicities.find(({ ethnicity }) => ethnicity === registrant.ethnicity);
@@ -114,13 +116,15 @@ export class StatsService implements OnModuleInit {
       }
     });
 
-    const total = await this.registrants.count({ isCheckedIn: true });
+    const total = await this.registrants.count();
 
-    return `Here is a breakdown of the ethnicities of registrants: ${ethnicities.map(et => ` ${et.ethnicity}: ${Math.round((et.number / total) * 100)}%`)}`;
+    return `Here is a breakdown of the ethnicities of registrants: ${ethnicities.map(et => `
+      ${et.ethnicity}: ${Math.round((et.number / total) * 100)}%`
+    )}`;
   }
 
   async getMajors(returnOnlyNumber = false): Promise<string | number> {
-    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
+    const allRegistrants = await this.registrants.find();
     const majors: MajorStat[] = [];
     allRegistrants.forEach(registrant => {
       const majorStat = majors.find(({ major }) => major === registrant.major);
@@ -135,11 +139,14 @@ export class StatsService implements OnModuleInit {
 
     const [ first, second, third ] = majors;
 
-    return returnOnlyNumber ? majors.length : `We have a total of ${majors.length} majors. Here are the top 3: ${first.major} (${first.number} registrants), ${second.major} (${second.number} registrants), ${third.major} (${third.number} registrants)`;
+    return returnOnlyNumber ? majors.length : `We have a total of ${majors.length} majors. Here are the top 3:
+      ${first.major} (${first.number} registrants),
+      ${second.major} (${second.number} registrants),
+      ${third.major} (${third.number} registrants)`;
   }
 
   async getSchools(returnOnlyNumber = false): Promise<string | number> {
-    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
+    const allRegistrants = await this.registrants.find();
     const schools: SchoolStat[] = [];
     allRegistrants.forEach(registrant => {
       const schoolStat = schools.find(({ school }) => school === registrant.school);
@@ -154,11 +161,14 @@ export class StatsService implements OnModuleInit {
 
     const [ first, second, third ] = schools;
 
-    return returnOnlyNumber ? schools.length : `We have a registrants from a total of ${schools.length} schools. Here are the top 3: ${first.school} (${first.number} registrants), ${second.school} (${second.number} registrants), ${third.school} (${third.number} registrants)`;
+    return returnOnlyNumber ? schools.length : `We have a registrants from a total of ${schools.length} schools. Here are the top 3:
+      ${first.school} (${first.number} registrants),
+      ${second.school} (${second.number} registrants),
+      ${third.school} (${third.number} registrants)`;
   }
 
   async getDegrees(returnOnlyNumber = false): Promise<string> {
-    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
+    const allRegistrants = await this.registrants.find();
     const degrees: DegreeStat[] = [];
     allRegistrants.forEach(registrant => {
       const degreeStat = degrees.find(({ degree }) => degree === registrant.degree);
@@ -169,13 +179,15 @@ export class StatsService implements OnModuleInit {
       }
     });
 
-    const total = await this.registrants.count({ isCheckedIn: true });
+    const total = await this.registrants.count();
 
-    return `Here is a breakdown of the degrees of registrants: ${degrees.map(de => ` ${de.degree}: ${Math.round((de.number / total) * 100)}%`)}`;
+    return `Here is a breakdown of the degrees of registrants: ${degrees.map(de => `
+      ${de.degree}: ${Math.round((de.number / total) * 100)}%`
+    )}`;
   }
 
   async getExperience(returnOnlyNumber = false): Promise<string> {
-    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
+    const allRegistrants = await this.registrants.find();
     const experiences: ExperienceStat[] = [];
     allRegistrants.forEach(registrant => {
       const experienceStat = experiences.find(({ hackathonsAttended }) => hackathonsAttended === registrant.hackathonsAttended);
@@ -186,13 +198,15 @@ export class StatsService implements OnModuleInit {
       }
     });
 
-    const total = await this.registrants.count({ isCheckedIn: true });
+    const total = await this.registrants.count();
 
-    return `Here is a breakdown of the registrants' prior hackathon experience: ${experiences.map(ex => ` ${ex.hackathonsAttended}: ${Math.round((ex.number / total) * 100)}%`)}`;
+    return `Here is a breakdown of the registrants' prior hackathon experience: ${experiences.map(ex => `
+      ${ex.hackathonsAttended}: ${Math.round((ex.number / total) * 100)}%`
+    )}`;
   }
 
   async getCountries(returnOnlyNumber = false): Promise<string | number> {
-    const allRegistrants = await this.registrants.find({ isCheckedIn: true });
+    const allRegistrants = await this.registrants.find();
     const countries: CountryStat[] = [];
     allRegistrants.forEach(registrant => {
       const countryStat = countries.find(({ country }) => country === registrant.country);
@@ -207,6 +221,9 @@ export class StatsService implements OnModuleInit {
 
     const [ first, second, third ] = countries;
 
-    return returnOnlyNumber ? countries.length : `We have a registrants from a total of ${countries.length} countries. Here are the top 3: ${first.country} (${first.number} registrants), ${second.country} (${second.number} registrants), ${third.country} (${third.number} registrants)`;
+    return returnOnlyNumber ? countries.length : `We have a registrants from a total of ${countries.length} countries. Here are the top 3:
+      ${first.country} (${first.number} registrants),
+      ${second.country} (${second.number} registrants),
+      ${third.country} (${third.number} registrants)`;
   }
 }
