@@ -6,7 +6,6 @@ import { Registrant } from './registrant.entity';
 
 const sendgridApiKey = process.env.SENDGRID_API_KEY;
 const serverHost = process.env.HOST;
-const websiteHost = process.env.WEBSITE_URL;
 
 sgMail.setApiKey(sendgridApiKey);
 
@@ -14,27 +13,38 @@ sgMail.setApiKey(sendgridApiKey);
 export class EmailService {
   fromAddress = `info@makeuc.io`;
 
-  template: HandlebarsTemplateDelegate<{ fullName: string, verificationUrl: string, coverImgUrl: string }>;
+  verificationTemplate: HandlebarsTemplateDelegate<{ fullName: string, verificationUrl: string }>;
+
+  welcomeTemplate: HandlebarsTemplateDelegate<{ fullName: string }>;
 
   constructor() {
-    this.getEmailTemplate();
+    this.getverificationEmailTemplate();
+    this.getWelcomeEmailTemplate();
   }
 
-  getEmailTemplate(): void {
-    readFile(`${__dirname}/../../templates/index.html`, (err, data) => {
+  getverificationEmailTemplate(): void {
+    readFile(`${__dirname}/../../templates/verification.html`, (err, data) => {
       if(err) Logger.error(err);
       if(!data) Logger.error(new Error(`Verification email template not found`));
 
-      this.template = Handlebars.compile(data.toString())
+      this.verificationTemplate = Handlebars.compile(data.toString())
+    });
+  }
+
+  getWelcomeEmailTemplate(): void {
+    readFile(`${__dirname}/../../templates/welcome.html`, (err, data) => {
+      if(err) Logger.error(err);
+      if(!data) Logger.error(new Error(`Welcome email template not found`));
+
+      this.welcomeTemplate = Handlebars.compile(data.toString())
     });
   }
 
   async sendVerificationEmail(registrant: Registrant): Promise<void> {
     const fullName = registrant.fullName;
     const verificationUrl = `${serverHost}/registrant/verify/${registrant.id}`;
-    const coverImgUrl = `${websiteHost}/email/cover.png`;
 
-    if(!this.template) {
+    if(!this.verificationTemplate) {
       return Logger.error(`Verification email template not found`);
     }
 
@@ -43,13 +53,35 @@ export class EmailService {
       from: this.fromAddress,
       subject: 'MakeUC Registration',
       text: 'Confirm Your Email with MakeUC',
-      html: this.template({ fullName, verificationUrl, coverImgUrl })
+      html: this.verificationTemplate({ fullName, verificationUrl })
     };
 
     sgMail.send(msg).then(() => {
       Logger.log(`Verification email sent to ${registrant.email} successfully`);
     }).catch(err => {
       Logger.error(`Verification email could not be sent to ${registrant.email}: ${err.message}`);
+    });
+  }
+
+  async sendWelcomeEmail(registrant: Registrant): Promise<void> {
+    const fullName = registrant.fullName;
+
+    if(!this.welcomeTemplate) {
+      return Logger.error(`Welcome email template not found`);
+    }
+
+    const msg: sgMail.MailDataRequired = {
+      to: registrant.email,
+      from: this.fromAddress,
+      subject: 'MakeUC Registration',
+      text: 'Thank you for registering to MakeUC 2021',
+      html: this.welcomeTemplate({ fullName })
+    };
+
+    sgMail.send(msg).then(() => {
+      Logger.log(`Welcome email sent to ${registrant.email} successfully`);
+    }).catch(err => {
+      Logger.error(`Welcome email could not be sent to ${registrant.email}: ${err.message}`);
     });
   }
 
