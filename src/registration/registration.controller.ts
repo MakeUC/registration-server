@@ -23,5 +23,6 @@ export class RegistrationController {
     if(!verified) {
       return { url: `${websiteHost}/already-verified` };
     }
+    return { url: `${websiteHost}/verified` }
   }
 }
