@@ -16,7 +16,7 @@ export class EmailService {
 
   verificationTemplate: HandlebarsTemplateDelegate<{ fullName: string, verificationUrl: string }>;
 
-  welcomeTemplate: HandlebarsTemplateDelegate<{ fullName: string, assetsUrl: string }>;
+  welcomeTemplate: HandlebarsTemplateDelegate<{ fullName: string, claimUrl: string }>;
 
   constructor() {
     this.getverificationEmailTemplate();
