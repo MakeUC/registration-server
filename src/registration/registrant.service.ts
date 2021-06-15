@@ -73,6 +73,7 @@ export class RegistrationService {
 
     await this.validateRegistrant(registrant);
     await this.registrants.save(registrant);
+    this.emailService.sendWelcomeEmail(registrant);
     return true;
   }
 
@@ -89,6 +90,7 @@ export class RegistrationService {
 
     await this.validateRegistrant(registrant);
     await this.registrants.save(registrant);
+    this.emailService.sendWelcomeEmail(registrant);
     return registrant;
   }
 
