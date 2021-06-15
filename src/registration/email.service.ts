@@ -6,6 +6,7 @@ import { Registrant } from './registrant.entity';
 
 const sendgridApiKey = process.env.SENDGRID_API_KEY;
 const serverHost = process.env.HOST;
+const siteUrl = process.env.WEBSITE_URL;
 
 sgMail.setApiKey(sendgridApiKey);
 
@@ -15,7 +16,7 @@ export class EmailService {
 
   verificationTemplate: HandlebarsTemplateDelegate<{ fullName: string, verificationUrl: string }>;
 
-  welcomeTemplate: HandlebarsTemplateDelegate<{ fullName: string }>;
+  welcomeTemplate: HandlebarsTemplateDelegate<{ fullName: string, assetsUrl: string }>;
 
   constructor() {
     this.getverificationEmailTemplate();
@@ -65,6 +66,7 @@ export class EmailService {
 
   async sendWelcomeEmail(registrant: Registrant): Promise<void> {
     const fullName = registrant.fullName;
+    const claimUrl = `${siteUrl}/claim`;
 
     if(!this.welcomeTemplate) {
       return Logger.error(`Welcome email template not found`);
@@ -75,7 +77,7 @@ export class EmailService {
       from: this.fromAddress,
       subject: 'MakeUC Registration',
       text: 'Thank you for registering to MakeUC 2021',
-      html: this.welcomeTemplate({ fullName })
+      html: this.welcomeTemplate({ fullName, claimUrl })
     };
 
     sgMail.send(msg).then(() => {
