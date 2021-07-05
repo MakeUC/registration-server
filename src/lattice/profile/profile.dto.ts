@@ -3,7 +3,7 @@ export class ProfileDTO {
   skills: string[]
   idea: string
   lookingFor: string[]
-  slack: string
+  discord: string
   started: boolean
   completed: boolean
   visible: boolean
@@ -11,9 +11,4 @@ export class ProfileDTO {
 
 export class ScoredProfileDTO extends ProfileDTO {
   score: number
-}
-
-export class SkillDTO {
-  title: string
-  icon: string
 }

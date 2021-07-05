@@ -1,8 +1,8 @@
 import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 import { IsDefined, IsMongoId, IsBoolean, IsString } from 'class-validator';
 
-@Entity({ name: `match` })
-export class Match {
+@Entity({ name: `swipe` })
+export class Swipe {
   @ObjectIdColumn()
   @IsMongoId()
   id: ObjectID;
@@ -20,5 +20,5 @@ export class Match {
   @Column()
   @IsDefined()
   @IsBoolean()
-  match: boolean
+  like: boolean
 }

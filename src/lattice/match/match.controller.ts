@@ -4,7 +4,7 @@ import { MatchService } from './match.service';
 import { CurrentUserDTO } from '../auth/dtos';
 import { CurrentUser } from '../auth/currentuser.decorator';
 import { MatchDTO } from './match.dto';
-import { Match } from '../match.entity';
+import { Swipe } from '../swipe.entity';
 
 @Controller(`match`)
 @UseGuards(AuthGuard(`jwt`))
@@ -12,7 +12,7 @@ export class MatchController {
   constructor(private readonly matchService: MatchService) {}
 
   @Post()
-  swipe(@CurrentUser() user: CurrentUserDTO, @Body() match: MatchDTO): Promise<Match> {
+  swipe(@CurrentUser() user: CurrentUserDTO, @Body() match: MatchDTO): Promise<Swipe> {
     return this.matchService.swipe({ ...match, from: user.id });
   }
 

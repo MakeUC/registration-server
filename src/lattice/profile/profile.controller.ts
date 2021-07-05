@@ -4,8 +4,7 @@ import { Tour, User } from '../user.entity';
 import { CurrentUserDTO } from '../auth/dtos';
 import { CurrentUser } from '../auth/currentuser.decorator';
 import { ProfileService } from './profile.service';
-import { ProfileDTO, ScoredProfileDTO, SkillDTO } from './profile.dto';
-import skills from './skills';
+import { ProfileDTO, ScoredProfileDTO } from './profile.dto';
 
 @Controller(`profile`)
 @UseGuards(AuthGuard(`jwt`))
@@ -35,11 +34,6 @@ export class ProfileController {
   @Put(`/visible`)
   setVisible(@CurrentUser() user: CurrentUserDTO, @Body() body: { visible: boolean }): Promise<User> {
     return this.profileService.setVisible(user.id, body.visible);
-  }
-
-  @Get(`/skills`)
-  getSkills(): Array<SkillDTO> {
-    return skills;
   }
 
   @Post(`/tour/:tour`)

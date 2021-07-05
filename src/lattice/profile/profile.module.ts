@@ -4,11 +4,11 @@ import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
 import { ScoreService } from './score.service';
 import { User } from '../user.entity';
-import { Match } from '../match.entity';
+import { Swipe } from '../swipe.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ User, Match ])
+    TypeOrmModule.forFeature([ User, Swipe ])
   ],
   controllers: [ProfileController],
   providers: [ProfileService, ScoreService],
