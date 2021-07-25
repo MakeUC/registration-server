@@ -3,7 +3,7 @@ import { hash, compare } from 'bcrypt';
 import {
   IsDefined, IsEmail,
   IsArray, ArrayMaxSize, ArrayUnique,
-  IsString, MaxLength
+  IsString, IsBoolean, MaxLength
 } from 'class-validator';
 
 export type Tour = `profile` | `home` | `notification` | `reset`;
@@ -56,6 +56,11 @@ export class User {
   @IsDefined()
   @IsString()
   discord: string
+
+  @Column({ default: false })
+  @IsDefined()
+  @IsBoolean()
+  inPerson: boolean
 
   @Column({ default: false })
   started: boolean

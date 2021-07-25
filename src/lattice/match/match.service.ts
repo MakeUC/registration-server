@@ -14,8 +14,7 @@ export class MatchService {
 
   private async checkMatch(from: string, to: string): Promise<void> {
     const otherWayMatch = await this.matches.findOne({ from: to, to: from, like: true });
-    console.log({ otherWayMatch });
-    
+
     if(!otherWayMatch) {
       Logger.log(`other way match not found`);
       return;

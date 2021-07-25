@@ -55,7 +55,8 @@ export class ProfileService {
       `started`,
       `completed`,
       `visible`,
-      `completedTours`
+      `completedTours`,
+      `inPerson`
     ]});
 
     if(!user) {
