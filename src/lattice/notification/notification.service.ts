@@ -49,7 +49,7 @@ export class NotificationService {
       `skills`,
       `idea`,
       `lookingFor`,
-      `slack`,
+      `discord`,
       `started`,
       `completed`,
       `visible`

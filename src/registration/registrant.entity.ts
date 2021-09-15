@@ -14,6 +14,10 @@ export class Registrant {
   @IsDefined()
   @IsEmail()
   email: string;
+
+  @Column()
+  @IsDefined()
+  phone: string;
   
   @Column()
   @IsDefined()

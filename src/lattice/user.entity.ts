@@ -3,7 +3,7 @@ import { hash, compare } from 'bcrypt';
 import {
   IsDefined, IsEmail,
   IsArray, ArrayMaxSize, ArrayUnique,
-  IsString, MaxLength, IsBoolean
+  IsString, IsBoolean, MaxLength
 } from 'class-validator';
 
 export type Tour = `profile` | `home` | `notification` | `reset`;
@@ -33,7 +33,7 @@ export class User {
   @Column()
   @IsDefined()
   @IsArray()
-  @ArrayMaxSize(6)
+  @ArrayMaxSize(10)
   @ArrayUnique()
   @IsString({ each: true })
   skills: string[]
@@ -47,7 +47,7 @@ export class User {
   @Column()
   @IsDefined()
   @IsArray()
-  @ArrayMaxSize(3)
+  @ArrayMaxSize(5)
   @ArrayUnique()
   @IsString({ each: true })
   lookingFor: string[]
@@ -55,7 +55,12 @@ export class User {
   @Column()
   @IsDefined()
   @IsString()
-  slack: string
+  discord: string
+
+  @Column({ default: false })
+  @IsDefined()
+  @IsBoolean()
+  inPerson: boolean
 
   @Column({ default: false })
   started: boolean

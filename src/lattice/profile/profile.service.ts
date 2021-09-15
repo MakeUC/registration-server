@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 import { ObjectID } from 'mongodb';
-import { Match } from '../match.entity';
+import { Swipe } from '../swipe.entity';
 import { ScoreService } from './score.service';
 import { ProfileDTO, ScoredProfileDTO } from './profile.dto';
 import { User, Tour } from '../user.entity';
@@ -12,11 +12,11 @@ import { User, Tour } from '../user.entity';
 export class ProfileService {
   constructor(
     @InjectRepository(User) private users: Repository<User>,
-    @InjectRepository(Match) private matches: Repository<Match>,
+    @InjectRepository(Swipe) private matches: Repository<Swipe>,
     private scoreService: ScoreService
   ) {}
 
-  private async getMatches(from: User): Promise<Array<Match>> {
+  private async getMatches(from: User): Promise<Array<Swipe>> {
     return this.matches.find({ from: from.id.toString() });
   }
 
@@ -51,11 +51,12 @@ export class ProfileService {
       `skills`,
       `idea`,
       `lookingFor`,
-      `slack`,
+      `discord`,
       `started`,
       `completed`,
       `visible`,
-      `completedTours`
+      `completedTours`,
+      `inPerson`
     ]});
 
     if(!user) {
