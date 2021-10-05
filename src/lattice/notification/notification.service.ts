@@ -31,6 +31,7 @@ export class NotificationService {
         Logger.log(`Sent match notification to ${from.email}`);
       } catch(err) {
         Logger.error(`Could not push notification to ${from.email}: ${err.message}`);
+        console.error(err);
       }
     });
 
