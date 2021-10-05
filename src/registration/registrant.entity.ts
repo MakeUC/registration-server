@@ -58,7 +58,7 @@ export class Registrant {
   questions: string;
 
   @Column()
-  isVerified: boolean
+  isVerified: boolean | null
 
   @Column()
   registeredAt: Date

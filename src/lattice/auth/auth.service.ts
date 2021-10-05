@@ -31,11 +31,21 @@ export class AuthService {
   }
 
   async findUser(email: string): Promise<User> {
-    return this.users.findOne({ email });
+    const user = await this.users.findOne({ email });
+    if(!user) {
+      throw new HttpException(`No user found with this email`, HttpStatus.FORBIDDEN);
+    }
+
+    return user;
   }
 
   async validateUser(payload: CurrentUserDTO): Promise<User> {
-    return this.users.findOne(payload.id);
+    const user = await this.users.findOne(payload.id);
+    if(!user) {
+      throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
+    }
+    
+    return user;
   }
 
   async login(email: string, password: string): Promise<string> {
@@ -53,12 +63,12 @@ export class AuthService {
   }
 
   async register(registrantId: string, password: string): Promise<string> {
-    const registrant: Registrant = await this.registrants.findOne(registrantId);
+    const registrant = await this.registrants.findOne(registrantId);
     if(!registrant) {
       throw new HttpException(`Registrant not found`, HttpStatus.NOT_FOUND);
     }
 
-    const existingUser: User = await this.users.findOne({ registrantId });
+    const existingUser = await this.users.findOne({ registrantId });
     if(existingUser) {
       throw new HttpException(`User already exists`, HttpStatus.BAD_REQUEST);
     }
@@ -66,11 +76,17 @@ export class AuthService {
     const user = this.users.create({ registrantId, password, email: registrant.email });
     const insertedUser = await this.users.save(user);
 
+    console.log({ user, insertedUser });
+
     return this.jwtService.signAsync({ id: insertedUser.id });
   }
 
   async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<void> {
     const user = await this.users.findOne(userId);
+    if(!user) {
+      throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
+    }
+
     const legit = await user.comparePassword(oldPassword);
 
     if(!legit) {

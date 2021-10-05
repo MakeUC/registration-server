@@ -56,7 +56,7 @@ export class RegistrationService {
 
     this.emailService.sendVerificationEmail(newRegistrant);
 
-    if(data.questions.trim().length) {
+    if(data.questions?.trim().length) {
       this.webhookService.sendQuestionWebhook(data);
     }
 
@@ -64,7 +64,10 @@ export class RegistrationService {
   }
 
   async verify(id: string): Promise<boolean> {
-    const registrant: Registrant = await this.registrants.findOne(id);
+    const registrant = await this.registrants.findOne(id);
+    if(!registrant) {
+      throw new HttpException(`Couldn't find a registration with the id ${id}. Please make sure that the id is correct, and you have verified your email.`, HttpStatus.NOT_FOUND);
+    }
     if(registrant.isVerified) {
       return false;
     }
@@ -78,7 +81,7 @@ export class RegistrationService {
   }
 
   async verifyByEmail(email: string): Promise<Registrant> {
-    const registrant: Registrant = await this.registrants.findOne({ email });
+    const registrant = await this.registrants.findOne({ email });
     if(!registrant) {
       throw new HttpException(`Registrant not found`, HttpStatus.NOT_FOUND);
     }

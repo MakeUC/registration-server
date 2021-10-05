@@ -1,8 +1,8 @@
 export class ProfileDTO {
   name: string
-  skills: string[]
+  skills?: string[]
   idea: string
-  lookingFor: string[]
+  lookingFor?: string[]
   discord: string
   started: boolean
   completed: boolean

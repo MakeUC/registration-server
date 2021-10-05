@@ -34,7 +34,7 @@ export class ProfileService {
 
   async getScoredProfiles(fromId: string): Promise<Array<ScoredProfileDTO>> {
     const from = await this.users.findOne(fromId);
-    if(!from.visible) {
+    if(!from?.visible) {
       throw new HttpException(`Profile must be visible`, HttpStatus.UNAUTHORIZED);
     }
 
@@ -45,7 +45,7 @@ export class ProfileService {
   }
 
   async getProfile(id: string): Promise<User> {
-    const user = this.users.findOne(id, { select: [
+    const user = await this.users.findOne(id, { select: [
       `email`,
       `name`,
       `skills`,
@@ -69,7 +69,7 @@ export class ProfileService {
 
   async startProfile(id: string): Promise<void> {
     const profile = await this.users.findOne(id);
-    if(profile.started) {
+    if(!profile || profile?.started) {
       throw new HttpException(`Profile already started`, HttpStatus.BAD_REQUEST);
     }
 
@@ -110,12 +110,21 @@ export class ProfileService {
 
   async setVisible(id: string, visible: boolean): Promise<User> {
     const profile = await this.users.findOne(id);
+    if(!profile) {
+      Logger.error(`User ${id} not found`);
+      throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
+    }
     profile.visible = !!visible;
     return this.users.save(profile);
   }
 
   async completeTour(id: string, tour: Tour): Promise<void> {
     const profile = await this.users.findOne(id);
+
+    if(!profile) {
+      Logger.error(`User ${id} not found`);
+      throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
+    }
 
     if(!profile.completedTours) {
       profile.completedTours = [];

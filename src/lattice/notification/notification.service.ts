@@ -8,8 +8,8 @@ import { NotificationDetailsDTO } from './notification-details.dto';
 import { PushSubscription } from './push-subscription.dto';
 import { Subscription } from '../subscription.entity';
 
-const publicKey = process.env.LATTICE_PUSH_PUBLIC_KEY;
-const privateKey = process.env.LATTICE_PUSH_PRIVATE_KEY;
+const publicKey = process.env.LATTICE_PUSH_PUBLIC_KEY!;
+const privateKey = process.env.LATTICE_PUSH_PRIVATE_KEY!;
 
 setVapidDetails(`https://makeuc.io`, publicKey, privateKey);
 
@@ -55,7 +55,7 @@ export class NotificationService {
       `completed`,
       `visible`
     ]});
-    return { notification, to };
+    return { notification, to: to! };
   }
 
   private async sendPushNotification(sub: PushSubscription, data: string): Promise<unknown> {
@@ -67,8 +67,8 @@ export class NotificationService {
     const userB = await this.users.findOne(b);
 
     return [
-      await this.createNotification(userA, userB),
-      await this.createNotification(userB, userA)
+      await this.createNotification(userA!, userB!),
+      await this.createNotification(userB!, userA!)
     ];
   }
 
@@ -96,7 +96,7 @@ export class NotificationService {
     Logger.log(`Unsubscribing ${userId}:${id} from push notifications`);
 
     const subscription = await this.subscriptions.findOne(id);
-    if(subscription.userId !== userId) {
+    if(!subscription || subscription.userId !== userId) {
       throw new HttpException(`Invalid subscription id`, HttpStatus.NOT_FOUND);
     }
 

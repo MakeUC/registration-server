@@ -4,10 +4,10 @@ import { ScoredProfileDTO, ProfileDTO } from './profile.dto';
 @Injectable()
 export class ScoreService {
   private scoreProfileOneWay(a: ProfileDTO, b: ProfileDTO): number {
-    return a.skills.reduce(
+    return a.skills?.reduce(
       (currentScore, skill) =>
-        b.lookingFor.includes(skill) ? ++currentScore : currentScore
-    , 0);
+        b.lookingFor?.includes(skill) ? ++currentScore : currentScore
+    , 0) || 0;
   }
 
   private scoreProfileBothWays(from: ProfileDTO, to: ProfileDTO): ScoredProfileDTO {

@@ -2,7 +2,7 @@ import { Injectable, Logger, HttpException, HttpStatus } from "@nestjs/common";
 import { S3 } from "aws-sdk";
 import { Registrant } from "./registrant.entity";
 
-const Bucket = process.env.AWS_S3_BUCKET;
+const Bucket = process.env.AWS_S3_BUCKET!;
 
 const s3 = new S3();
 

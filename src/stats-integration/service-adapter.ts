@@ -15,7 +15,7 @@ export interface ServiceAdapter {
   sendMessage(text: string): Promise<any>
 }
 
-export const getAdapter = (service: string): ServiceAdapter => {
+export const getAdapter = (service: string): ServiceAdapter | null => {
   switch (service) {
     case `slack`:
       return SlackAdapter

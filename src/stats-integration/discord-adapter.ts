@@ -2,9 +2,9 @@ import { Request } from 'express';
 import Axios from 'axios';
 import { ServiceAdapter, StatCommand } from './service-adapter';
 
-const STATS_KEY = process.env.STATS_KEY;
-const DISCORD_BOT_SERVER_KEY = process.env.DISCORD_BOT_SERVER_KEY;
-const DISCORD_MESSAGE_URL = process.env.DISCORD_MESSAGE_URL;
+const STATS_KEY = process.env.STATS_KEY!;
+const DISCORD_BOT_SERVER_KEY = process.env.DISCORD_BOT_SERVER_KEY!;
+const DISCORD_MESSAGE_URL = process.env.DISCORD_MESSAGE_URL!;
 
 export const DiscordAdapter: ServiceAdapter = {
   helpText: `
@@ -22,7 +22,7 @@ Here are some stats about MakeUC2021 I can get for you:
 	`,
 	returnOnlyNumber: false,
 	authenticateRequest(req: Request): boolean {
-    const token = req.headers.authorization.split(' ')[1]
+    const token = req.headers.authorization!.split(' ')[1]
     return token === STATS_KEY;
 	},
 	authenticateUser(req: Request, allowed: string[]): boolean {
