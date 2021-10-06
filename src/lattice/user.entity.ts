@@ -31,12 +31,11 @@ export class User {
   name: string;
 
   @Column()
-  @IsDefined()
   @IsArray()
   @ArrayMaxSize(10)
   @ArrayUnique()
   @IsString({ each: true })
-  skills: string[]
+  skills?: string[]
 
   @Column()
   @IsDefined()
@@ -45,12 +44,11 @@ export class User {
   idea: string
 
   @Column()
-  @IsDefined()
   @IsArray()
   @ArrayMaxSize(5)
   @ArrayUnique()
   @IsString({ each: true })
-  lookingFor: string[]
+  lookingFor?: string[]
 
   @Column()
   @IsDefined()

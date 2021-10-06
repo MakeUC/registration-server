@@ -1,8 +1,8 @@
 import { Injectable, Logger, HttpService } from "@nestjs/common";
 import { RegistrantDTO } from "./registrant.dto";
 
-const questionsWebhookUrl = process.env.QUESTION_WEBHOOK_URL;
-const DISCORD_BOT_SERVER_KEY = process.env.DISCORD_BOT_SERVER_KEY;
+const questionsWebhookUrl = process.env.QUESTION_WEBHOOK_URL!;
+const DISCORD_BOT_SERVER_KEY = process.env.DISCORD_BOT_SERVER_KEY!;
 
 @Injectable()
 export class WebhookService {

@@ -4,9 +4,9 @@ import * as sgMail from '@sendgrid/mail';
 import Handlebars from 'handlebars';
 import { Registrant } from './registrant.entity';
 
-const sendgridApiKey = process.env.SENDGRID_API_KEY;
-const serverHost = process.env.HOST;
-const siteUrl = process.env.WEBSITE_URL;
+const sendgridApiKey = process.env.SENDGRID_API_KEY!;
+const serverHost = process.env.HOST!;
+const siteUrl = process.env.WEBSITE_URL!;
 
 sgMail.setApiKey(sendgridApiKey);
 

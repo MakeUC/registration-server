@@ -4,8 +4,8 @@ import { stringify } from 'querystring';
 import Axios from 'axios';
 import { ServiceAdapter, StatCommand } from './service-adapter';
 
-const slackSigningSecret = process.env.SLACK_SIGNING_SECRET;
-const slackUpdateWebhookUrl = process.env.SLACK_UPDATE_WEBHOOK_URL;
+const slackSigningSecret = process.env.SLACK_SIGNING_SECRET!;
+const slackUpdateWebhookUrl = process.env.SLACK_UPDATE_WEBHOOK_URL!;
 
 const fixedEncodeURIComponent = (str: string) =>
   str.replace(/[!'()*~]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
@@ -40,8 +40,8 @@ export const SlackAdapter: ServiceAdapter = {
 	`,
 	returnOnlyNumber: false,
 	authenticateRequest(req: Request): boolean {
-		const timestamp = req.get(`X-Slack-Request-Timestamp`);
-		const signature = req.get(`X-Slack-Signature`);
+		const timestamp = req.get(`X-Slack-Request-Timestamp`)!;
+		const signature = req.get(`X-Slack-Signature`)!;
 		const body = stringify(req.body).replace(/%20/g, '+');
 		const payload = fixedEncodeURIComponent(body);
 

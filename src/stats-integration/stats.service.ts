@@ -39,6 +39,7 @@ export class StatsService implements OnModuleInit {
       const adapter = getAdapter(service);
       if(!adapter) {
         Logger.error(`Invalid service string found: ${service}`);
+        return;
       }
       try {
         await adapter.sendMessage(text);

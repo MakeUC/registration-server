@@ -4,7 +4,7 @@ import { StatsService } from './stats.service';
 import { getAdapter } from './service-adapter';
 import { RegistrationService } from 'src/registration/registrant.service';
 
-const discordAdmins = process.env.DISCORD_ADMINS.split(`,`);
+const discordAdmins = process.env.DISCORD_ADMINS!.split(`,`);
 
 @Controller(`stats`)
 export class StatsController {
@@ -35,7 +35,7 @@ export class StatsController {
     }
 
     if(statCommand.includes(`verify`)) {
-      const allowed = adapter.authenticateUser(req, discordAdmins);
+      const allowed = adapter.authenticateUser?.(req, discordAdmins);
       if(!allowed) {
         throw new HttpException(`You cannot perform this operation`, HttpStatus.UNAUTHORIZED);
       }
