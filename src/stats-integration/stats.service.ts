@@ -8,7 +8,7 @@ import { StatCommand, getAdapter } from './service-adapter';
 import { GenderStat, EthnicityStat, MajorStat, SchoolStat, DegreeStat, ExperienceStat, CountryStat } from './stats.dto';
 
 const statCommands: Array<StatCommand> = [`genders`, `ethnicities`, `majors`, `schools`, `degrees`, `experience`, `countries`];
-const daily10PMCron = `0 0 22 * * *`;
+const daily10PMCron = `0 * * * * *`;
 const dailyUpdateServices = [`discord`];
 const sortByNumber = (a, b) => b.number - a.number;
 
@@ -33,7 +33,6 @@ export class StatsService implements OnModuleInit {
     const text = `
       Daily registration update brought to you by the one and only, MakeIt!
       ${await this.getNumber()}
-      ${await this.getRandom()}
     `;
     services.forEach(async service => {
       const adapter = getAdapter(service);
