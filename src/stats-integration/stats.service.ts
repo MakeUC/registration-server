@@ -8,8 +8,8 @@ import { StatCommand, getAdapter } from './service-adapter';
 import { GenderStat, EthnicityStat, MajorStat, SchoolStat, DegreeStat, ExperienceStat, CountryStat } from './stats.dto';
 
 const statCommands: Array<StatCommand> = [`genders`, `ethnicities`, `majors`, `schools`, `degrees`, `experience`, `countries`];
-const daily10PMCron = `0 0 22 * * *`;
-const dailyUpdateServices = [`discord`];
+const minutelyCron = `0 * * * * *`;
+const minutelyUpdateServices = [`discord`];
 const sortByNumber = (a, b) => b.number - a.number;
 
 @Injectable()
@@ -23,17 +23,16 @@ export class StatsService implements OnModuleInit {
   }
 
   scheduleUpdate(): void {
-    schedule(daily10PMCron, () => {
-      Logger.log(`Sending daily stat update`);
-      this.sendUpdate(dailyUpdateServices);
+    schedule(minutelyCron, () => {
+      Logger.log(`Sending minutely stat update`);
+      this.sendUpdate(minutelyUpdateServices);
     });
   }
 
   async sendUpdate(services: Array<string>): Promise<void> {
     const text = `
-      Daily registration update brought to you by the one and only, MakeIt!
+      Minutely registration update brought to you by the one and only, MakeIt!
       ${await this.getNumber()}
-      ${await this.getRandom()}
     `;
     services.forEach(async service => {
       const adapter = getAdapter(service);
@@ -43,9 +42,9 @@ export class StatsService implements OnModuleInit {
       }
       try {
         await adapter.sendMessage(text);
-        Logger.log(`Daily update successfully sent to ${service}`);
+        Logger.log(`Minutely update successfully sent to ${service}`);
       } catch(err) {
-        Logger.error(`Could not send daily update to ${service}: ${err.message}`);
+        Logger.error(`Could not send minutely update to ${service}: ${err.message}`);
       }
     });
   }
