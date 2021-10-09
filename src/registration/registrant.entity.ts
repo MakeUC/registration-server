@@ -16,7 +16,6 @@ export class Registrant {
   email: string;
 
   @Column()
-  @IsDefined()
   phone: string;
   
   @Column()
