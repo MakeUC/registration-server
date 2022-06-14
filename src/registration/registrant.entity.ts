@@ -48,7 +48,11 @@ export class Registrant {
   @Column()
   @IsDefined()
   ethnicity: string;
-
+  
+  @Column()
+  @IsDefined()
+  age: number;
+  
   @Column()
   @IsDefined()
   gender: string;
