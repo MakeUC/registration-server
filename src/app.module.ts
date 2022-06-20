@@ -10,6 +10,8 @@ import { Swipe } from './lattice/swipe.entity';
 import { Notification } from './lattice/notification.entity';
 import { Subscription } from './lattice/subscription.entity';
 import { Skill } from './lattice/skill.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -20,6 +22,10 @@ const databaseUrl = process.env.DATABASE_URL;
       url: databaseUrl,
       entities: [Registrant, User, Swipe, Notification, Subscription, Skill]
     }),
+    ServeStaticModule.forRoot({
+        rootPath: join(__dirname, '..', 'static'),
+        serveRoot: '/static'
+      }),
     RegistrationModule,
     StatsIntegrationModule,
     LatticeModule

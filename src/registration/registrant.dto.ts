@@ -9,6 +9,7 @@ export class RegistrantDTO {
   readonly graduation: number
   readonly hackathonsAttended: string
   readonly ethnicity: string
+  readonly age: number
   readonly gender: string
   readonly questions?: string
 }
