@@ -17,7 +17,7 @@ const mg = mailgun.client({username: 'api', key: mailgunApiKey});
 
 @Injectable()
 export class EmailService {
-  fromAddress = `info@makeuc.io`;
+  fromAddress = `MakeUC Info <info@makeuc.io>`;
 
   verificationTemplate: HandlebarsTemplateDelegate<{ fullName: string, verificationUrl: string, staticUrl: string }>;
 
