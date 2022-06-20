@@ -13,7 +13,7 @@ export class MatchService {
   ) {}
 
   private async checkMatch(from: string, to: string): Promise<void> {
-    const otherWayMatch = await this.matches.findOne({ from: to, to: from, like: true });
+    const otherWayMatch = await this.matches.findOneBy({ from: to, to: from, like: true });
 
     if(!otherWayMatch) {
       Logger.log(`other way match not found`);
@@ -25,7 +25,7 @@ export class MatchService {
   }
 
   async swipe(match: MatchDTO): Promise<Swipe> {
-    const existing = await this.matches.findOne({ from: match.from, to: match.to });
+    const existing = await this.matches.findOneBy({ from: match.from, to: match.to });
     if(existing) {
       Logger.error(`${match.from} already swiped on ${match.to}`);
       throw new HttpException(`Already swiped`, HttpStatus.BAD_REQUEST);
@@ -45,7 +45,7 @@ export class MatchService {
   }
 
   async reset(from: string): Promise<void> {
-    const matches = await this.matches.find({ from, like: false });
+    const matches = await this.matches.findBy({ from, like: false });
     await this.matches.remove(matches);
 
     return;

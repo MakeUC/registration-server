@@ -1,10 +1,11 @@
-import { Entity, Column, ObjectID, ObjectIdColumn, BeforeInsert } from 'typeorm';
+import { Entity, Column, ObjectIdColumn, BeforeInsert } from 'typeorm';
 import { hash, compare } from 'bcrypt';
 import {
   IsDefined, IsEmail,
   IsArray, ArrayMaxSize, ArrayUnique,
   IsString, IsBoolean, MaxLength
 } from 'class-validator';
+import { ObjectID } from 'mongodb';
 
 export type Tour = `profile` | `home` | `notification` | `reset`;
 

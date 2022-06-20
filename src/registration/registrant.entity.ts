@@ -1,5 +1,6 @@
-import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
+import { Entity, Column, ObjectIdColumn } from 'typeorm';
 import { IsDefined, IsEmail } from 'class-validator';
+import { ObjectID } from 'mongodb';
 
 @Entity({ name: `registrant` })
 export class Registrant {

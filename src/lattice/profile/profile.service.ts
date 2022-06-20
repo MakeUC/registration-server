@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not, In } from 'typeorm';
 import { validateOrReject } from 'class-validator';
 import { ObjectID } from 'mongodb';
 import { Swipe } from '../swipe.entity';
@@ -17,23 +17,21 @@ export class ProfileService {
   ) {}
 
   private async getMatches(from: User): Promise<Array<Swipe>> {
-    return this.matches.find({ from: from.id.toString() });
+    return this.matches.findBy({ from: from.id.toString() });
   }
 
   private async getUnscoredProfiles(from: User): Promise<Array<User>> {
     const matches = await this.getMatches(from);
     const matchedUsers = matches.map(match => new ObjectID(match.to));
 
-    return this.users.find({
-      where: {
-        visible: true,
-        _id: { $not: { $in: [ ...matchedUsers, from.id ] } },
-      }
+    return this.users.findBy({
+      visible: true,
+      id: Not(In([ ...matchedUsers, from.id ]))
     });
   }
 
   async getScoredProfiles(fromId: string): Promise<Array<ScoredProfileDTO>> {
-    const from = await this.users.findOne(fromId);
+    const from = await this.users.findOneBy({ id: fromId });
     if(!from?.visible) {
       throw new HttpException(`Profile must be visible`, HttpStatus.UNAUTHORIZED);
     }
@@ -45,19 +43,7 @@ export class ProfileService {
   }
 
   async getProfile(id: string): Promise<User> {
-    const user = await this.users.findOne(id, { select: [
-      `email`,
-      `name`,
-      `skills`,
-      `idea`,
-      `lookingFor`,
-      `discord`,
-      `started`,
-      `completed`,
-      `visible`,
-      `completedTours`,
-      `inPerson`
-    ]});
+    const user = await this.users.findOneBy({id});
 
     if(!user) {
       Logger.error(`User ${id} not found`);
@@ -68,7 +54,7 @@ export class ProfileService {
   }
 
   async startProfile(id: string): Promise<void> {
-    const profile = await this.users.findOne(id);
+    const profile = await this.users.findOneBy({id});
     if(!profile || profile?.started) {
       throw new HttpException(`Profile already started`, HttpStatus.BAD_REQUEST);
     }
@@ -78,7 +64,7 @@ export class ProfileService {
   }
 
   async updateProfile(id: string, updates: ProfileDTO): Promise<User> {
-    const profile = await this.users.findOne(id);
+    const profile = await this.users.findOneBy({id});
     if(!profile) {
       Logger.error(`User ${id} not found`);
       throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
@@ -109,7 +95,7 @@ export class ProfileService {
   }
 
   async setVisible(id: string, visible: boolean): Promise<User> {
-    const profile = await this.users.findOne(id);
+    const profile = await this.users.findOneBy({id});
     if(!profile) {
       Logger.error(`User ${id} not found`);
       throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
@@ -119,7 +105,7 @@ export class ProfileService {
   }
 
   async completeTour(id: string, tour: Tour): Promise<void> {
-    const profile = await this.users.findOne(id);
+    const profile = await this.users.findOneBy({id});
 
     if(!profile) {
       Logger.error(`User ${id} not found`);

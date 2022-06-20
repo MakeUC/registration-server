@@ -22,7 +22,7 @@ export class NotificationService {
   ) {}
 
   private async createNotification(from: User, to: User): Promise<Notification> {
-    const pushSubscriptions = await this.subscriptions.find({ userId: from.id.toString() });
+    const pushSubscriptions = await this.subscriptions.findBy({ userId: from.id.toString() });
 
     pushSubscriptions?.forEach(async ps => {
       try {
@@ -44,17 +44,7 @@ export class NotificationService {
   }
 
   private async hydrateNotification(notification: Notification): Promise<NotificationDetailsDTO> {
-    const to = await this.users.findOne(notification.to, { select: [
-      `email`,
-      `name`,
-      `skills`,
-      `idea`,
-      `lookingFor`,
-      `discord`,
-      `started`,
-      `completed`,
-      `visible`
-    ]});
+    const to = await this.users.findOneBy({ id: notification.to});
     return { notification, to: to! };
   }
 
@@ -63,8 +53,8 @@ export class NotificationService {
   };
 
   async createNotificationForBoth(a: string, b: string): Promise<[Notification, Notification]> {
-    const userA = await this.users.findOne(a);
-    const userB = await this.users.findOne(b);
+    const userA = await this.users.findOneBy({ id: a });
+    const userB = await this.users.findOneBy({ id: b });
 
     return [
       await this.createNotification(userA!, userB!),
@@ -73,14 +63,14 @@ export class NotificationService {
   }
 
   async getNotifications(from: string): Promise<Array<NotificationDetailsDTO>> {
-    const notifications = await this.notifications.find({ from });
+    const notifications = await this.notifications.findBy({ from });
     return Promise.all(
       notifications.map(notification => this.hydrateNotification(notification))
     );
   }
 
   async readNotifications(from: string): Promise<void> {
-    const notifications = await this.notifications.find({ from, read: false });
+    const notifications = await this.notifications.findBy({ from, read: false });
     await this.notifications.save(
       notifications.map(notification => ({ ...notification, read: true }))
     );
@@ -95,7 +85,7 @@ export class NotificationService {
   async unsubscribe(userId: string, id: string): Promise<void> {
     Logger.log(`Unsubscribing ${userId}:${id} from push notifications`);
 
-    const subscription = await this.subscriptions.findOne(id);
+    const subscription = await this.subscriptions.findOneBy({id});
     if(!subscription || subscription.userId !== userId) {
       throw new HttpException(`Invalid subscription id`, HttpStatus.NOT_FOUND);
     }

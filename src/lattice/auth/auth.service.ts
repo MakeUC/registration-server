@@ -20,7 +20,7 @@ export class AuthService {
 
   async getRegistrantEmail(registrantId: string): Promise<string> {
     try {
-      const registrant = await this.registrants.findOne(registrantId);
+      const registrant = await this.registrants.findOneBy({ id: registrantId });
       if(!registrant || !registrant.isVerified) {
         throw new HttpException(`Invalid registrant`, HttpStatus.UNAUTHORIZED);
       }
@@ -31,7 +31,7 @@ export class AuthService {
   }
 
   async findUser(email: string): Promise<User> {
-    const user = await this.users.findOne({ email });
+    const user = await this.users.findOneBy({ email });
     if(!user) {
       throw new HttpException(`No user found with this email`, HttpStatus.FORBIDDEN);
     }
@@ -40,7 +40,7 @@ export class AuthService {
   }
 
   async validateUser(payload: CurrentUserDTO): Promise<User> {
-    const user = await this.users.findOne(payload.id);
+    const user = await this.users.findOneBy({ id: payload.id });
     if(!user) {
       throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
     }
@@ -49,7 +49,7 @@ export class AuthService {
   }
 
   async login(email: string, password: string): Promise<string> {
-    const user = await this.users.findOne({ email });
+    const user = await this.users.findOneBy({ email });
     if(!user) {
       throw new HttpException(`Invalid credentials`, HttpStatus.UNAUTHORIZED);
     }
@@ -63,12 +63,12 @@ export class AuthService {
   }
 
   async register(registrantId: string, password: string): Promise<string> {
-    const registrant = await this.registrants.findOne(registrantId);
+    const registrant = await this.registrants.findOneBy({ id: registrantId });
     if(!registrant) {
       throw new HttpException(`Registrant not found`, HttpStatus.NOT_FOUND);
     }
 
-    const existingUser = await this.users.findOne({ registrantId });
+    const existingUser = await this.users.findOneBy({ id: registrantId });
     if(existingUser) {
       throw new HttpException(`User already exists`, HttpStatus.BAD_REQUEST);
     }
@@ -82,7 +82,7 @@ export class AuthService {
   }
 
   async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<void> {
-    const user = await this.users.findOne(userId);
+    const user = await this.users.findOneBy({ id: userId});
     if(!user) {
       throw new HttpException(`User not found`, HttpStatus.NOT_FOUND);
     }
@@ -100,7 +100,7 @@ export class AuthService {
 
   async sendResetLink(email: string): Promise<void> {
     Logger.log(`Sending reset link to ${email}`);
-    const user = await this.users.findOne({ email });
+    const user = await this.users.findOneBy({ email });
     if(!user) {
       throw new HttpException(`No user found with this email`, HttpStatus.FORBIDDEN);
     }
@@ -123,7 +123,7 @@ export class AuthService {
   async getResetInfo(resetToken: string): Promise<string> {
     try {
       const payload: ResetTokenDTO = await this.jwtService.verifyAsync(resetToken);
-      const user = await this.users.findOne(payload.id);
+      const user = await this.users.findOneBy({ id: payload.id });
       if(!user || (user.password !== payload.currentPassword)) {
         throw new HttpException(`This link is either invalid or expired`, HttpStatus.UNAUTHORIZED);
       }
@@ -135,7 +135,7 @@ export class AuthService {
 
   async resetPassword(resetToken: string, password: string): Promise<void> {
     const payload: ResetTokenDTO = await this.jwtService.verifyAsync(resetToken);
-    const user = await this.users.findOne(payload.id);
+    const user = await this.users.findOneBy({ id: payload.id });
     if(!user) {
       throw new HttpException(`This link is either invalid or expired`, HttpStatus.UNAUTHORIZED);
     }
