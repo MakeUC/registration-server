@@ -10,7 +10,6 @@ const mailgunApiKey = process.env.MAILGUN_API_KEY!;
 const mailgunDomain = process.env.MAILGUN_DOMAIN!;
 const serverHost = process.env.HOST!;
 const siteUrl = process.env.WEBSITE_URL!;
-const staticUrl = process.env.STATIC_URL!;
 
 const mailgun = new Mailgun(FormData);
 const mg = mailgun.client({username: 'api', key: mailgunApiKey});
@@ -19,9 +18,9 @@ const mg = mailgun.client({username: 'api', key: mailgunApiKey});
 export class EmailService {
   fromAddress = `info@makeuc.io`;
 
-  verificationTemplate: HandlebarsTemplateDelegate<{ fullName: string, verificationUrl: string, staticUrl: string }>;
+  verificationTemplate: HandlebarsTemplateDelegate<{ fullName: string, verificationUrl: string }>;
 
-  welcomeTemplate: HandlebarsTemplateDelegate<{ fullName: string, claimUrl: string, staticUrl: string }>;
+  welcomeTemplate: HandlebarsTemplateDelegate<{ fullName: string, claimUrl: string }>;
 
   constructor() {
     this.getverificationEmailTemplate();
@@ -60,7 +59,7 @@ export class EmailService {
             from: this.fromAddress,
             subject: 'MakeUC Registration',
             text: 'Confirm Your Email with MakeUC',
-            html: this.verificationTemplate({ fullName, verificationUrl, staticUrl }),
+            html: this.verificationTemplate({ fullName, verificationUrl }),
         })
         .then((msg) => {
             Logger.log(`Message from MailGun: ${msg}`)
@@ -86,7 +85,7 @@ export class EmailService {
             from: this.fromAddress,
             subject: 'MakeUC Registration',
             text: 'Thank you for registering to MakeUC 2021',
-            html: this.welcomeTemplate({ fullName, claimUrl, staticUrl }),
+            html: this.welcomeTemplate({ fullName, claimUrl }),
         })
         .then((msg) => {
             Logger.log(`Message from MailGun: ${msg}`)

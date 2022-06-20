@@ -1,6 +1,5 @@
-import { Entity, Column, ObjectIdColumn } from 'typeorm';
+import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 import { IsDefined, IsMongoId, IsBoolean, IsString } from 'class-validator';
-import { ObjectID } from 'mongodb';
 
 @Entity({ name: `swipe` })
 export class Swipe {

@@ -64,7 +64,7 @@ export class RegistrationService {
   }
 
   async verify(id: string): Promise<boolean> {
-    const registrant = await this.registrants.findOneBy({id});
+    const registrant = await this.registrants.findOne(id);
     if(!registrant) {
       throw new HttpException(`Couldn't find a registration with the id ${id}. Please make sure that the id is correct, and you have verified your email.`, HttpStatus.NOT_FOUND);
     }
@@ -81,7 +81,7 @@ export class RegistrationService {
   }
 
   async verifyByEmail(email: string): Promise<Registrant> {
-    const registrant = await this.registrants.findOneBy({ email });
+    const registrant = await this.registrants.findOne({ email });
     if(!registrant) {
       throw new HttpException(`Registrant not found`, HttpStatus.NOT_FOUND);
     }
@@ -99,7 +99,7 @@ export class RegistrationService {
 
   async sendSecondVerification(): Promise<void> {
     Logger.log(`Sending verification email to all unverified registrants`);
-    const registrants = await this.registrants.findBy({ isVerified: undefined });
+    const registrants = await this.registrants.find({ isVerified: null });
     Logger.log(`Found ${registrants.length} unverified registrants`);
     registrants.forEach(registrant => this.emailService.sendVerificationEmail(registrant));
   }
@@ -109,7 +109,7 @@ export class RegistrationService {
       return `Checkin is not open yet, please wait until checkin starts at 10 AM EST!`;
     }
 
-    const registrant = await this.registrants.findOneBy({ email, isVerified: true });
+    const registrant = await this.registrants.findOne({ email, isVerified: true });
 
     if(!registrant) {
       return `Couldn't find a registration with the email ${email}. Please make sure that the email is correct, and you have verified your email.`;

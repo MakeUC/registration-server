@@ -1,7 +1,6 @@
-import { Entity, Column, ObjectIdColumn } from 'typeorm';
+import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 import { IsDefined, IsMongoId, IsString } from 'class-validator';
 import { PushSubscription } from './notification/push-subscription.dto';
-import { ObjectID } from 'mongodb';
 
 @Entity({ name: `subscription` })
 export class Subscription {

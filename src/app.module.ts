@@ -10,7 +10,6 @@ import { Swipe } from './lattice/swipe.entity';
 import { Notification } from './lattice/notification.entity';
 import { Subscription } from './lattice/subscription.entity';
 import { Skill } from './lattice/skill.entity';
-import { StaticController } from './static.controller';
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -25,6 +24,6 @@ const databaseUrl = process.env.DATABASE_URL;
     StatsIntegrationModule,
     LatticeModule
   ],
-  controllers: [AppController, StaticController]
+  controllers: [AppController]
 })
 export class AppModule {}
