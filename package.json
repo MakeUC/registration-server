@@ -37,7 +37,7 @@
     "dotenv": "^8.2.0",
     "form-data": "^4.0.0",
     "handlebars": "^4.7.6",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mailgun.js": "^7.0.2",
     "mongodb": "^3.5.9",
     "node-cron": "^2.0.3",
